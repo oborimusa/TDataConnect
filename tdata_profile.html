@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Connect · My Profile</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 20px 12px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      background: rgba(255,255,255,0.35);
+      transform: scale(0.94);
+    }
+
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Profile section */
+    .profile-section {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #0f6b7c, #144d5e);
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 3rem;
+      color: white;
+    }
+
+    .profile-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e3b44;
+    }
+
+    .profile-phone {
+      font-size: 0.85rem;
+      color: #6f8f9f;
+      margin-top: 4px;
+    }
+
+    .profile-email {
+      font-size: 0.8rem;
+      color: #8ea3b2;
+      margin-top: 2px;
+    }
+
+    .edit-profile-btn {
+      background: transparent;
+      border: 1.5px solid #0f6b7c;
+      padding: 8px 24px;
+      border-radius: 40px;
+      color: #0f6b7c;
+      font-weight: 600;
+      font-size: 0.8rem;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .edit-profile-btn:active {
+      background: #0f6b7c;
+      color: white;
+      transform: scale(0.96);
+    }
+
+    /* Menu items */
+    .menu-section {
+      padding: 8px 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid #f0f4f9;
+    }
+
+    .menu-item:active {
+      background: #f8fafd;
+    }
+
+    .menu-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+      background: #eef3fa;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f6b7c;
+      font-size: 1.1rem;
+    }
+
+    .menu-text h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1e3b44;
+    }
+
+    .menu-text p {
+      font-size: 0.7rem;
+      color: #8ea3b2;
+      margin-top: 2px;
+    }
+
+    .menu-arrow {
+      color: #cbdbe6;
+      font-size: 0.9rem;
+    }
+
+    /* Referral card */
+    .referral-card {
+      background: linear-gradient(135deg, #fff6e5, #ffe9d4);
+      margin: 16px 20px;
+      padding: 16px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .referral-info h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e67e22;
+    }
+
+    .referral-code {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #e67e22;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    .copy-btn {
+      background: #e67e22;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Logout button */
+    .logout-btn {
+      background: #fef3f2;
+      border: none;
+      width: calc(100% - 40px);
+      margin: 20px;
+      padding: 14px;
+      border-radius: 60px;
+      color: #c0392b;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .logout-btn:active {
+      background: #fce4e2;
+      transform: scale(0.97);
+    }
+
+    /* Modal */
+    .modal-mask {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 340px;
+      width: 85%;
+      border-radius: 32px;
+      padding: 24px;
+    }
+
+    .modal-card h3 {
+      margin-bottom: 16px;
+      color: #1e3b44;
+    }
+
+    .modal-card input {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: 1px solid #ddd;
+      border-radius: 60px;
+      font-size: 0.9rem;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      background: #0f6b7c;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btn.cancel {
+      background: #aaa;
+    }
+
+    /* Beneficiary list */
+    .beneficiary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1100;
+      display: none;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-top">
+      <div class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h2>My Profile</h2>
+    </div>
+  </div>
+
+  <!-- Profile info -->
+  <div class="profile-section">
+    <div class="profile-avatar">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="profile-name" id="profileName">Chioma Adebayo</div>
+    <div class="profile-phone" id="profilePhone">08012345678</div>
+    <div class="profile-email" id="profileEmail">chioma@example.com</div>
+    <button class="edit-profile-btn" id="editProfileBtn"><i class="fas fa-pen"></i> Edit Profile</button>
+  </div>
+
+  <!-- Referral code card -->
+  <div class="referral-card">
+    <div class="referral-info">
+      <h4><i class="fas fa-gift"></i> Your Referral Code</h4>
+      <div class="referral-code" id="referralCode">TDC-CHIOMA</div>
+      <small>Share & earn ₦500 each</small>
+    </div>
+    <button class="copy-btn" id="copyReferralBtn"><i class="fas fa-copy"></i> Copy</button>
+  </div>
+
+  <!-- Menu items -->
+  <div class="menu-section">
+    <div class="menu-item" id="changePinBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-key"></i></div>
+        <div class="menu-text">
+          <h4>Change PIN</h4>
+          <p>Update your transaction PIN</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="beneficiariesBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-users"></i></div>
+        <div class="menu-text">
+          <h4>Beneficiaries</h4>
+          <p>Manage saved accounts & contacts</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="bankAccountBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-university"></i></div>
+        <div class="menu-text">
+          <h4>Bank Account</h4>
+          <p>Add withdrawal bank details</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="notificationsBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-bell"></i></div>
+        <div class="menu-text">
+          <h4>Notifications</h4>
+          <p>Manage alert preferences</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="securityBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="menu-text">
+          <h4>Security</h4>
+          <p>Two-factor authentication</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="helpBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-headset"></i></div>
+        <div class="menu-text">
+          <h4>Help & Support</h4>
+          <p>FAQs, contact us, report issue</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+
+    <div class="menu-item" id="termsBtn">
+      <div class="menu-left">
+        <div class="menu-icon"><i class="fas fa-file-contract"></i></div>
+        <div class="menu-text">
+          <h4>Terms & Privacy</h4>
+          <p>Legal and privacy policy</p>
+        </div>
+      </div>
+      <div class="menu-arrow"><i class="fas fa-chevron-right"></i></div>
+    </div>
+  </div>
+
+  <!-- Logout button -->
+  <button class="logout-btn" id="logoutBtn">
+    <i class="fas fa-sign-out-alt"></i> Logout
+  </button>
+
+  <!-- Bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item" data-nav="history"><i class="fas fa-history"></i><span>History</span></div>
+    <div class="nav-item active" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<!-- Change PIN Modal -->
+<div id="pinModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-key"></i> Change PIN</h3>
+    <input type="password" id="currentPin" placeholder="Current PIN" maxlength="6">
+    <input type="password" id="newPin" placeholder="New 4-digit PIN" maxlength="6">
+    <input type="password" id="confirmPin" placeholder="Confirm New PIN" maxlength="6">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="confirmPinBtn">Update</button>
+      <button class="modal-btn cancel" id="closePinModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Beneficiaries Modal -->
+<div id="beneficiariesModal" class="modal-mask">
+  <div class="modal-card" style="max-width: 360px;">
+    <h3><i class="fas fa-users"></i> Beneficiaries</h3>
+    <div id="beneficiariesList"></div>
+    <button class="modal-btn" id="addBeneficiaryBtn" style="margin-top: 12px;">+ Add New</button>
+    <div class="modal-buttons" style="margin-top: 12px;">
+      <button class="modal-btn cancel" id="closeBeneficiariesModal">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Beneficiary Modal -->
+<div id="addBeneficiaryModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-user-plus"></i> Add Beneficiary</h3>
+    <input type="text" id="beneficiaryName" placeholder="Full name">
+    <input type="tel" id="beneficiaryPhone" placeholder="Phone number">
+    <select id="beneficiaryType" style="width:100%; padding:12px; margin:12px 0; border-radius:60px; border:1px solid #ddd;">
+      <option value="airtime">Airtime</option>
+      <option value="data">Data</option>
+      <option value="bill">Bill Payment</option>
+    </select>
+    <div class="modal-buttons">
+      <button class="modal-btn" id="saveBeneficiaryBtn">Save</button>
+      <button class="modal-btn cancel" id="closeAddBeneficiaryModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bank Account Modal -->
+<div id="bankModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-university"></i> Bank Account</h3>
+    <select id="bankSelect">
+      <option>GTBank</option><option>First Bank</option><option>Access Bank</option>
+      <option>UBA</option><option>Zenith Bank</option><option>Providus Bank</option>
+    </select>
+    <input type="text" id="accountNumber" placeholder="Account number">
+    <input type="text" id="accountName" placeholder="Account name">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="saveBankBtn">Save</button>
+      <button class="modal-btn cancel" id="closeBankModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
+    <input type="text" id="editName" placeholder="Full name">
+    <input type="email" id="editEmail" placeholder="Email address">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="saveProfileBtn">Save Changes</button>
+      <button class="modal-btn cancel" id="closeEditProfileModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+  // User data (simulated)
+  let userData = {
+    name: "Chioma Adebayo",
+    phone: "08012345678",
+    email: "chioma@example.com",
+    pin: "1234",
+    referralCode: "TDC-CHIOMA",
+    bankAccount: null,
+    beneficiaries: []
+  };
+
+  // Load saved data from localStorage if exists
+  if (localStorage.getItem('tdata_user')) {
+    const saved = JSON.parse(localStorage.getItem('tdata_user'));
+    userData = { ...userData, ...saved };
+  }
+
+  function saveUserData() {
+    localStorage.setItem('tdata_user', JSON.stringify(userData));
+  }
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#c0392b' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
+
+  // Update profile display
+  function updateProfileDisplay() {
+    document.getElementById('profileName').innerText = userData.name;
+    document.getElementById('profilePhone').innerText = userData.phone;
+    document.getElementById('profileEmail').innerText = userData.email;
+    document.getElementById('referralCode').innerText = userData.referralCode;
+  }
+  updateProfileDisplay();
+
+  // Copy referral code
+  document.getElementById('copyReferralBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(userData.referralCode);
+    showToast("✅ Referral code copied!");
+  });
+
+  // Edit Profile
+  document.getElementById('editProfileBtn').addEventListener('click', () => {
+    document.getElementById('editName').value = userData.name;
+    document.getElementById('editEmail').value = userData.email;
+    document.getElementById('editProfileModal').style.display = 'flex';
+  });
+
+  document.getElementById('saveProfileBtn').addEventListener('click', () => {
+    const newName = document.getElementById('editName').value.trim();
+    const newEmail = document.getElementById('editEmail').value.trim();
+    if (newName) userData.name = newName;
+    if (newEmail) userData.email = newEmail;
+    saveUserData();
+    updateProfileDisplay();
+    document.getElementById('editProfileModal').style.display = 'none';
+    showToast("Profile updated successfully!");
+  });
+
+  // Change PIN
+  document.getElementById('changePinBtn').addEventListener('click', () => {
+    document.getElementById('pinModal').style.display = 'flex';
+  });
+
+  document.getElementById('confirmPinBtn').addEventListener('click', () => {
+    const current = document.getElementById('currentPin').value;
+    const newPin = document.getElementById('newPin').value;
+    const confirm = document.getElementById('confirmPin').value;
+    
+    if (current !== userData.pin) {
+      showToast("❌ Current PIN is incorrect", true);
+      return;
+    }
+    if (newPin.length < 4 || isNaN(newPin)) {
+      showToast("❌ PIN must be at least 4 digits", true);
+      return;
+    }
+    if (newPin !== confirm) {
+      showToast("❌ New PINs do not match", true);
+      return;
+    }
+    userData.pin = newPin;
+    saveUserData();
+    showToast("✅ PIN changed successfully!");
+    document.getElementById('pinModal').style.display = 'none';
+    document.getElementById('currentPin').value = '';
+    document.getElementById('newPin').value = '';
+    document.getElementById('confirmPin').value = '';
+  });
+
+  // Beneficiaries
+  function renderBeneficiaries() {
+    const container = document.getElementById('beneficiariesList');
+    if (!userData.beneficiaries || userData.beneficiaries.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:#8ea3b2; padding:20px;">No beneficiaries added</p>';
+      return;
+    }
+    container.innerHTML = '';
+    userData.beneficiaries.forEach((ben, idx) => {
+      const div = document.createElement('div');
+      div.className = 'beneficiary-item';
+      div.innerHTML = `
+        <div>
+          <strong>${ben.name}</strong><br>
+          <small>${ben.phone} · ${ben.type}</small>
+        </div>
+        <i class="fas fa-trash" style="color:#c0392b; cursor:pointer;" data-idx="${idx}"></i>
+      `;
+      div.querySelector('.fa-trash')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userData.beneficiaries.splice(idx, 1);
+        saveUserData();
+        renderBeneficiaries();
+        showToast("Beneficiary removed");
+      });
+      container.appendChild(div);
+    });
+  }
+
+  document.getElementById('beneficiariesBtn').addEventListener('click', () => {
+    renderBeneficiaries();
+    document.getElementById('beneficiariesModal').style.display = 'flex';
+  });
+
+  document.getElementById('addBeneficiaryBtn').addEventListener('click', () => {
+    document.getElementById('beneficiariesModal').style.display = 'none';
+    document.getElementById('addBeneficiaryModal').style.display = 'flex';
+  });
+
+  document.getElementById('saveBeneficiaryBtn').addEventListener('click', () => {
+    const name = document.getElementById('beneficiaryName').value.trim();
+    const phone = document.getElementById('beneficiaryPhone').value.trim();
+    const type = document.getElementById('beneficiaryType').value;
+    if (!name || !phone) {
+      showToast("Please fill all fields", true);
+      return;
+    }
+    userData.beneficiaries.push({ name, phone, type });
+    saveUserData();
+    showToast("Beneficiary added!");
+    document.getElementById('addBeneficiaryModal').style.display = 'none';
+    document.getElementById('beneficiaryName').value = '';
+    document.getElementById('beneficiaryPhone').value = '';
+    renderBeneficiaries();
+    document.getElementById('beneficiariesModal').style.display = 'flex';
+  });
+
+  // Bank Account
+  document.getElementById('bankAccountBtn').addEventListener('click', () => {
+    if (userData.bankAccount) {
+      document.getElementById('bankSelect').value = userData.bankAccount.bank;
+      document.getElementById('accountNumber').value = userData.bankAccount.number;
+      document.getElementById('accountName').value = userData.bankAccount.name;
+    }
+    document.getElementById('bankModal').style.display = 'flex';
+  });
+
+  document.getElementById('saveBankBtn').addEventListener('click', () => {
+    const bank = document.getElementById('bankSelect').value;
+    const number = document.getElementById('accountNumber').value.trim();
+    const name = document.getElementById('accountName').value.trim();
+    if (!number || !name) {
+      showToast("Please fill all fields", true);
+      return;
+    }
+    userData.bankAccount = { bank, number, name };
+    saveUserData();
+    showToast("Bank account saved!");
+    document.getElementById('bankModal').style.display = 'none';
+  });
+
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('isLoggedIn');
+    showToast("Logging out...");
+    setTimeout(() => {
+      window.location.href = "tdata_login.html";
+    }, 1000);
+  });
+
+  // Close modals
+  const closeButtons = ['closePinModal', 'closeBeneficiariesModal', 'closeAddBeneficiaryModal', 'closeBankModal', 'closeEditProfileModal'];
+  closeButtons.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', () => {
+      document.querySelectorAll('.modal-mask').forEach(modal => modal.style.display = 'none');
+    });
+  });
+
+  // Back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = "tdata_homepage.html";
+  });
+
+  // Bottom navigation
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') window.location.href = "tdata_homepage.html";
+      else if (dest === 'data') window.location.href = "tdata_dataplans.html";
+      else if (dest === 'history') window.location.href = "tdata_history.html";
+      else if (dest === 'profile') showToast("You're already on Profile", false);
+    });
+  });
+
+  // Other menu items (demo)
+  document.getElementById('notificationsBtn')?.addEventListener('click', () => showToast("Notification settings coming soon"));
+  document.getElementById('securityBtn')?.addEventListener('click', () => showToast("2FA coming soon"));
+  document.getElementById('helpBtn')?.addEventListener('click', () => showToast("Contact support: help@tdata.com"));
+  document.getElementById('termsBtn')?.addEventListener('click', () => showToast("Terms & Privacy page coming soon"));
+
+  // Click outside modal to close
+  document.querySelectorAll('.modal-mask').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.style.display = 'none';
+    });
+  });
+</script>
+</body>
+</html>

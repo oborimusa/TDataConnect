@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Hub · My Wallet</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 20px 12px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      background: rgba(255,255,255,0.35);
+      transform: scale(0.94);
+    }
+
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    /* Balance card */
+    .balance-card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 20px;
+      margin: 12px 0 8px;
+      border: 1px solid rgba(255,255,255,0.25);
+      text-align: center;
+    }
+
+    .balance-label {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      letter-spacing: 0.5px;
+    }
+
+    .balance-amount {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin: 8px 0;
+      word-break: break-word;
+    }
+
+    .balance-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .action-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 60px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .action-btn:active {
+      transform: scale(0.96);
+      background: rgba(255,255,255,0.35);
+    }
+
+    /* main content */
+    .main-content {
+      padding: 20px;
+    }
+
+    /* section titles */
+    .section-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 20px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e3b44;
+    }
+
+    /* funding methods grid */
+    .methods-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .method-card {
+      background: #f8fafd;
+      border: 1px solid #eef2f8;
+      border-radius: 20px;
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .method-card:active {
+      background: #eef3fc;
+      transform: scale(0.97);
+    }
+
+    .method-card i {
+      font-size: 2rem;
+      color: #0f6b7c;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .method-card h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .method-card p {
+      font-size: 0.7rem;
+      color: #6f8f9f;
+      margin-top: 4px;
+    }
+
+    /* transaction list (wallet history) */
+    .history-list {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f7;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f4f9;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .history-icon {
+      width: 40px;
+      height: 40px;
+      background: #eef3fa;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f6b7c;
+    }
+
+    .history-detail h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .history-detail p {
+      font-size: 0.7rem;
+      color: #6f8f9f;
+    }
+
+    .history-amount {
+      font-weight: 700;
+    }
+
+    .positive {
+      color: #2c9c6c;
+    }
+
+    .negative {
+      color: #c0392b;
+    }
+
+    /* modal for fund/withdraw */
+    .modal-mask {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 340px;
+      width: 85%;
+      border-radius: 32px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .modal-card h3 {
+      margin-bottom: 16px;
+    }
+
+    .modal-card input, .modal-card select {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 60px;
+      font-size: 1rem;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .modal-btn {
+      background: #0f6b7c;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btn.cancel {
+      background: #aaa;
+    }
+
+    /* toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1100;
+      display: none;
+      white-space: nowrap;
+    }
+
+    /* bottom nav */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-top">
+      <div class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h2>My Wallet</h2>
+    </div>
+    <div class="balance-card">
+      <div class="balance-label">Available Balance</div>
+      <div class="balance-amount" id="walletBalanceDisplay">₦6,250.00</div>
+      <div class="balance-actions">
+        <button class="action-btn" id="fundWalletBtn"><i class="fas fa-plus-circle"></i> Fund</button>
+        <button class="action-btn" id="withdrawBtn"><i class="fas fa-arrow-down"></i> Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="section-title">
+      <i class="fas fa-credit-card"></i> <span>Quick funding methods</span>
+    </div>
+    <div class="methods-grid">
+      <div class="method-card" data-method="card">
+        <i class="fas fa-credit-card"></i>
+        <h4>Card Payment</h4>
+        <p>Visa, Mastercard, Verve</p>
+      </div>
+      <div class="method-card" data-method="transfer">
+        <i class="fas fa-university"></i>
+        <h4>Bank Transfer</h4>
+        <p>Get virtual account</p>
+      </div>
+      <div class="method-card" data-method="ussd">
+        <i class="fas fa-mobile-alt"></i>
+        <h4>USSD Code</h4>
+        <p>Quick dial from phone</p>
+      </div>
+      <div class="method-card" data-method="qr">
+        <i class="fas fa-qrcode"></i>
+        <h4>Scan to Pay</h4>
+        <p>Pay with QR code</p>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <i class="fas fa-history"></i> <span>Wallet transactions</span>
+    </div>
+    <div class="history-list" id="walletHistory">
+      <div class="history-item">
+        <div class="history-left">
+          <div class="history-icon"><i class="fas fa-wallet"></i></div>
+          <div class="history-detail">
+            <h4>Wallet funding</h4>
+            <p>Today, 10:23 AM</p>
+          </div>
+        </div>
+        <div class="history-amount positive">+₦5,000.00</div>
+      </div>
+      <div class="history-item">
+        <div class="history-left">
+          <div class="history-icon"><i class="fas fa-sim-card"></i></div>
+          <div class="history-detail">
+            <h4>Data purchase (MTN 1.5GB)</h4>
+            <p>Today, 09:15 AM</p>
+          </div>
+        </div>
+        <div class="history-amount negative">-₦1,000.00</div>
+      </div>
+      <div class="history-item">
+        <div class="history-left">
+          <div class="history-icon"><i class="fas fa-lightbulb"></i></div>
+          <div class="history-detail">
+            <h4>Electricity bill (Ikeja)</h4>
+            <p>Yesterday, 5:30 PM</p>
+          </div>
+        </div>
+        <div class="history-amount negative">-₦4,500.00</div>
+      </div>
+      <div class="history-item">
+        <div class="history-left">
+          <div class="history-icon"><i class="fas fa-gift"></i></div>
+          <div class="history-detail">
+            <h4>Referral bonus</h4>
+            <p>Yesterday, 12:00 PM</p>
+          </div>
+        </div>
+        <div class="history-amount positive">+₦500.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item active" data-nav="wallet"><i class="fas fa-wallet"></i><span>Wallet</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<!-- Modal for funding -->
+<div id="fundModal" class="modal-mask">
+  <div class="modal-card">
+    <i class="fas fa-money-bill-wave" style="font-size: 2rem; color:#0f6b7c;"></i>
+    <h3>Fund Wallet</h3>
+    <input type="number" id="fundAmount" placeholder="Enter amount (₦)" value="1000">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="confirmFundBtn">Proceed to pay</button>
+      <button class="modal-btn cancel" id="closeFundModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for withdrawal -->
+<div id="withdrawModal" class="modal-mask">
+  <div class="modal-card">
+    <i class="fas fa-university" style="font-size: 2rem; color:#0f6b7c;"></i>
+    <h3>Withdraw to Bank</h3>
+    <select id="bankSelect">
+      <option value="GTBank">GTBank</option>
+      <option value="First Bank">First Bank</option>
+      <option value="Access Bank">Access Bank</option>
+      <option value="UBA">UBA</option>
+      <option value="Zenith">Zenith Bank</option>
+    </select>
+    <input type="text" id="accountNumber" placeholder="Account number" value="0123456789">
+    <input type="number" id="withdrawAmount" placeholder="Amount (₦)" value="2000">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="confirmWithdrawBtn">Withdraw</button>
+      <button class="modal-btn cancel" id="closeWithdrawModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg">✔ Transaction successful</div>
+
+<script>
+  // Wallet state (persistent across pages ideally)
+  let walletBalance = 6250.00;
+  const balanceSpan = document.getElementById('walletBalanceDisplay');
+  const historyContainer = document.getElementById('walletHistory');
+
+  function updateBalanceUI() {
+    balanceSpan.innerText = `₦${walletBalance.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  }
+  updateBalanceUI();
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#b33' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2500);
+  }
+
+  // Add a wallet transaction to the top of history
+  function addWalletHistory(type, amount, description, isCredit) {
+    const newItem = document.createElement('div');
+    newItem.className = 'history-item';
+    const icon = isCredit ? '<i class="fas fa-wallet"></i>' : '<i class="fas fa-exchange-alt"></i>';
+    const amountClass = isCredit ? 'positive' : 'negative';
+    const sign = isCredit ? '+' : '-';
+    newItem.innerHTML = `
+      <div class="history-left">
+        <div class="history-icon">${icon}</div>
+        <div class="history-detail">
+          <h4>${description}</h4>
+          <p>Just now</p>
+        </div>
+      </div>
+      <div class="history-amount ${amountClass}">${sign}₦${amount.toLocaleString('en-NG', {minimumFractionDigits: 2})}</div>
+    `;
+    historyContainer.insertBefore(newItem, historyContainer.firstChild);
+    // keep only last 10 items roughly
+    if (historyContainer.children.length > 8) {
+      historyContainer.removeChild(historyContainer.lastChild);
+    }
+  }
+
+  // Fund wallet simulation
+  function fundWallet(amount) {
+    if (amount <= 0) {
+      showToast("Please enter a valid amount", true);
+      return false;
+    }
+    walletBalance += amount;
+    updateBalanceUI();
+    addWalletHistory(amount, amount, `Wallet funding (${amount} NGN)`, true);
+    showToast(`✅ Wallet funded with ₦${amount.toLocaleString()}!`);
+    return true;
+  }
+
+  // Withdraw simulation
+  function withdrawFromWallet(amount, bank, account) {
+    if (amount <= 0) {
+      showToast("Enter valid amount", true);
+      return false;
+    }
+    if (amount > walletBalance) {
+      showToast("Insufficient balance", true);
+      return false;
+    }
+    if (!account || account.length < 10) {
+      showToast("Valid account number required", true);
+      return false;
+    }
+    walletBalance -= amount;
+    updateBalanceUI();
+    addWalletHistory(amount, amount, `Withdrawal to ${bank} (${account.substr(-4)})`, false);
+    showToast(`💰 ₦${amount.toLocaleString()} withdrawn to ${bank} account ending with ${account.substr(-4)}`);
+    return true;
+  }
+
+  // Modal handlers
+  const fundModal = document.getElementById('fundModal');
+  const withdrawModal = document.getElementById('withdrawModal');
+  const fundBtn = document.getElementById('fundWalletBtn');
+  const withdrawBtn = document.getElementById('withdrawBtn');
+
+  fundBtn.onclick = () => { fundModal.style.display = 'flex'; };
+  withdrawBtn.onclick = () => { withdrawModal.style.display = 'flex'; };
+
+  document.getElementById('closeFundModal').onclick = () => { fundModal.style.display = 'none'; };
+  document.getElementById('closeWithdrawModal').onclick = () => { withdrawModal.style.display = 'none'; };
+
+  document.getElementById('confirmFundBtn').onclick = () => {
+    const amount = parseFloat(document.getElementById('fundAmount').value);
+    if (isNaN(amount) || amount <= 0) {
+      showToast("Enter a positive amount", true);
+      return;
+    }
+    fundWallet(amount);
+    fundModal.style.display = 'none';
+    document.getElementById('fundAmount').value = '1000';
+  };
+
+  document.getElementById('confirmWithdrawBtn').onclick = () => {
+    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const bank = document.getElementById('bankSelect').value;
+    const account = document.getElementById('accountNumber').value.trim();
+    if (withdrawFromWallet(amount, bank, account)) {
+      withdrawModal.style.display = 'none';
+      document.getElementById('withdrawAmount').value = '2000';
+      document.getElementById('accountNumber').value = '';
+    }
+  };
+
+  // Close modals when clicking outside
+  window.onclick = (e) => {
+    if (e.target === fundModal) fundModal.style.display = 'none';
+    if (e.target === withdrawModal) withdrawModal.style.display = 'none';
+  };
+
+  // Method cards demo alerts
+  document.querySelectorAll('.method-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const method = card.getAttribute('data-method');
+      if (method === 'card') {
+        showToast("Card payment: you'll be redirected to secure Paystack page", false);
+        setTimeout(() => {
+          // simulate funding with a fixed amount for demo
+          fundWallet(2000);
+        }, 1500);
+      } else if (method === 'transfer') {
+        showToast("Bank transfer: virtual account number will be shown (demo: fund ₦1000)", false);
+        setTimeout(() => fundWallet(1000), 1500);
+      } else {
+        showToast(`${method.toUpperCase()} method coming soon`, false);
+      }
+    });
+  });
+
+  // Back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = "tdata_homepage.html";
+  });
+
+  // Bottom navigation
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') window.location.href = "tdata_homepage.html";
+      else if (dest === 'data') window.location.href = "tdata_dataplans.html";
+      else if (dest === 'wallet') showToast("You're already on Wallet page", false);
+      else if (dest === 'profile') showToast("Profile page coming soon", false);
+    });
+  });
+</script>
+</body>
+</html>

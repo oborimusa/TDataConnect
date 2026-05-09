@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Connect · Transaction History</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 20px 12px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      background: rgba(255,255,255,0.35);
+      transform: scale(0.94);
+    }
+
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .wallet-chip {
+      background: rgba(255,255,255,0.15);
+      border-radius: 60px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Filter tabs */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px 20px 8px;
+      background: white;
+      border-bottom: 1px solid #eef2f8;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .filter-chip {
+      background: #f0f4f9;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #2c4b5c;
+    }
+
+    .filter-chip.active {
+      background: #0f6b7c;
+      color: white;
+    }
+
+    .filter-chip:active {
+      transform: scale(0.96);
+    }
+
+    /* Main content */
+    .main-content {
+      padding: 20px;
+    }
+
+    /* Summary stats */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #f8fafd;
+      border-radius: 20px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #eef2f8;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: #6f8f9f;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e3b44;
+    }
+
+    /* Transaction list */
+    .transactions-list {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f7;
+      overflow: hidden;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f0f4f9;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .transaction-item:active {
+      background: #f8fafd;
+    }
+
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+
+    .trans-left {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .trans-icon {
+      width: 48px;
+      height: 48px;
+      background: #eef3fa;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f6b7c;
+      font-size: 1.3rem;
+    }
+
+    .trans-detail {
+      flex: 1;
+    }
+
+    .trans-detail h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .trans-detail p {
+      font-size: 0.7rem;
+      color: #6f8e9e;
+    }
+
+    .trans-amount {
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .positive {
+      color: #2c9c6c;
+    }
+
+    .negative {
+      color: #c0392b;
+    }
+
+    .status-badge {
+      font-size: 0.6rem;
+      padding: 2px 8px;
+      border-radius: 30px;
+      margin-left: 8px;
+      background: #eef2f8;
+      color: #2c4b5c;
+    }
+
+    .status-success {
+      background: #e0f5ec;
+      color: #2c9c6c;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: #8ea3b2;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    /* Modal for transaction details */
+    .modal-mask {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 340px;
+      width: 85%;
+      border-radius: 32px;
+      padding: 24px;
+    }
+
+    .modal-card h3 {
+      margin-bottom: 16px;
+      color: #1e3b44;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    .detail-label {
+      color: #6f8f9f;
+      font-size: 0.8rem;
+    }
+
+    .detail-value {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .modal-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      background: #0f6b7c;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btn.cancel {
+      background: #aaa;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1100;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-top">
+      <div class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h2>Transaction History</h2>
+    </div>
+    <div class="wallet-chip">
+      <i class="fas fa-wallet"></i> <span id="walletBalance">₦6,250.00</span>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filter-tabs" id="filterTabs">
+    <div class="filter-chip active" data-filter="all">All</div>
+    <div class="filter-chip" data-filter="data">Data</div>
+    <div class="filter-chip" data-filter="bills">Bills</div>
+    <div class="filter-chip" data-filter="funding">Funding</div>
+    <div class="filter-chip" data-filter="airtime">Airtime</div>
+  </div>
+
+  <div class="main-content">
+    <!-- Stats summary -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Spent</div>
+        <div class="stat-value" id="totalSpent">₦0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Transactions</div>
+        <div class="stat-value" id="totalCount">0</div>
+      </div>
+    </div>
+
+    <!-- Transactions list -->
+    <div id="transactionsContainer"></div>
+  </div>
+
+  <!-- Bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item active" data-nav="history"><i class="fas fa-history"></i><span>History</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<!-- Transaction details modal -->
+<div id="detailModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-receipt"></i> Transaction Details</h3>
+    <div id="modalDetails"></div>
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" id="closeModalBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+  // Mock transaction database (simulates user's history)
+  let walletBalance = 6250.00;
+  
+  let transactions = [
+    { id: 1, type: "data", title: "MTN 1.5GB Data", description: "MTN Nigeria - 1.5GB plan", amount: 1000, isCredit: false, date: "2024-01-15T10:23:00", status: "success", reference: "TDC-20240115-001", network: "MTN" },
+    { id: 2, type: "bills", title: "Electricity Bill", description: "Ikeja Electric - Meter: 1234567890", amount: 4500, isCredit: false, date: "2024-01-14T17:15:00", status: "success", reference: "TDC-20240114-002", provider: "Ikeja Electric" },
+    { id: 3, type: "funding", title: "Wallet Funding", description: "Bank transfer via Paystack", amount: 5000, isCredit: true, date: "2024-01-14T12:05:00", status: "success", reference: "TDC-20240114-003", method: "Bank Transfer" },
+    { id: 4, type: "data", title: "Glo 2GB Data", description: "Glo Nigeria - 2GB weekly plan", amount: 1100, isCredit: false, date: "2024-01-13T09:45:00", status: "success", reference: "TDC-20240113-004", network: "Glo" },
+    { id: 5, type: "airtime", title: "Airtime Purchase", description: "Self recharge - 08012345678", amount: 500, isCredit: false, date: "2024-01-12T19:30:00", status: "success", reference: "TDC-20240112-005", phone: "08012345678" },
+    { id: 6, type: "bills", title: "DSTV Subscription", description: "DSTV Compact - Smartcard: 12345678", amount: 4500, isCredit: false, date: "2024-01-10T14:20:00", status: "success", reference: "TDC-20240110-006", bouquet: "Compact" },
+    { id: 7, type: "funding", title: "Referral Bonus", description: "Bonus from referring Tunde", amount: 500, isCredit: true, date: "2024-01-09T11:00:00", status: "success", reference: "TDC-20240109-007", referrer: "Tunde" },
+    { id: 8, type: "data", title: "Airtel 3GB Data", description: "Airtel Nigeria - 3GB weekly", amount: 1500, isCredit: false, date: "2024-01-08T08:15:00", status: "success", reference: "TDC-20240108-008", network: "Airtel" },
+    { id: 9, type: "airtime", title: "Airtime Purchase", description: "For Mom - 08098765432", amount: 1000, isCredit: false, date: "2024-01-07T16:40:00", status: "success", reference: "TDC-20240107-009", phone: "08098765432" },
+    { id: 10, type: "bills", title: "WAEC Result Checker", description: "WAEC PIN purchase", amount: 1500, isCredit: false, date: "2024-01-05T10:10:00", status: "success", reference: "TDC-20240105-010", service: "WAEC" }
+  ];
+
+  // Helper functions
+  function updateBalanceUI() {
+    document.getElementById('walletBalance').innerText = `₦${walletBalance.toLocaleString('en-NG', {minimumFractionDigits: 2})}`;
+  }
+  updateBalanceUI();
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now - date;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    if (days === 0) return `Today, ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+    if (days === 1) return `Yesterday, ${date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+    return date.toLocaleDateString('en-GB', {day:'numeric', month:'short', year:'numeric'});
+  }
+
+  function getIconForType(type) {
+    const icons = {
+      data: '<i class="fas fa-sim-card"></i>',
+      bills: '<i class="fas fa-lightbulb"></i>',
+      funding: '<i class="fas fa-wallet"></i>',
+      airtime: '<i class="fas fa-phone-alt"></i>'
+    };
+    return icons[type] || '<i class="fas fa-exchange-alt"></i>';
+  }
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#c0392b' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
+
+  // Render transactions with filter
+  let currentFilter = 'all';
+
+  function renderTransactions() {
+    let filtered = transactions;
+    if (currentFilter !== 'all') {
+      filtered = transactions.filter(t => t.type === currentFilter);
+    }
+    
+    const container = document.getElementById('transactionsContainer');
+    const totalSpent = filtered.filter(t => !t.isCredit).reduce((sum, t) => sum + t.amount, 0);
+    document.getElementById('totalSpent').innerText = `₦${totalSpent.toLocaleString()}`;
+    document.getElementById('totalCount').innerText = filtered.length;
+    
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <p>No transactions found</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = '<div class="transactions-list"></div>';
+    const listContainer = container.querySelector('.transactions-list');
+    
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(trans => {
+      const transDiv = document.createElement('div');
+      transDiv.className = 'transaction-item';
+      transDiv.setAttribute('data-id', trans.id);
+      const amountClass = trans.isCredit ? 'positive' : 'negative';
+      const sign = trans.isCredit ? '+' : '-';
+      transDiv.innerHTML = `
+        <div class="trans-left">
+          <div class="trans-icon">${getIconForType(trans.type)}</div>
+          <div class="trans-detail">
+            <h4>${trans.title}</h4>
+            <p>${formatDate(trans.date)}</p>
+          </div>
+        </div>
+        <div class="trans-amount ${amountClass}">
+          ${sign}₦${trans.amount.toLocaleString()}
+        </div>
+      `;
+      transDiv.addEventListener('click', () => showTransactionDetails(trans));
+      listContainer.appendChild(transDiv);
+    });
+  }
+
+  // Show transaction details modal
+  function showTransactionDetails(trans) {
+    const modal = document.getElementById('detailModal');
+    const modalDetails = document.getElementById('modalDetails');
+    
+    let detailsHtml = `
+      <div class="detail-row">
+        <span class="detail-label">Transaction ID</span>
+        <span class="detail-value">${trans.reference}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Type</span>
+        <span class="detail-value">${trans.title}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Date & Time</span>
+        <span class="detail-value">${new Date(trans.date).toLocaleString()}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Amount</span>
+        <span class="detail-value ${trans.isCredit ? 'positive' : 'negative'}">${trans.isCredit ? '+' : '-'}₦${trans.amount.toLocaleString()}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="detail-value" style="color:#2c9c6c;">✓ Successful</span>
+      </div>
+    `;
+    
+    // Add extra details based on type
+    if (trans.type === 'data') {
+      detailsHtml += `
+        <div class="detail-row">
+          <span class="detail-label">Network</span>
+          <span class="detail-value">${trans.network || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Plan</span>
+          <span class="detail-value">${trans.description}</span>
+        </div>
+      `;
+    } else if (trans.type === 'bills') {
+      detailsHtml += `
+        <div class="detail-row">
+          <span class="detail-label">Bill Type</span>
+          <span class="detail-value">${trans.description}</span>
+        </div>
+      `;
+    } else if (trans.type === 'airtime') {
+      detailsHtml += `
+        <div class="detail-row">
+          <span class="detail-label">Phone Number</span>
+          <span class="detail-value">${trans.phone || 'N/A'}</span>
+        </div>
+      `;
+    } else if (trans.type === 'funding') {
+      detailsHtml += `
+        <div class="detail-row">
+          <span class="detail-label">Payment Method</span>
+          <span class="detail-value">${trans.method || 'Bank Transfer'}</span>
+        </div>
+      `;
+    }
+    
+    modalDetails.innerHTML = detailsHtml;
+    modal.style.display = 'flex';
+  }
+
+  // Filter handlers
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentFilter = chip.getAttribute('data-filter');
+      renderTransactions();
+    });
+  });
+
+  // Back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = "tdata_homepage.html";
+  });
+
+  // Close modal
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    document.getElementById('detailModal').style.display = 'none';
+  });
+  
+  document.getElementById('detailModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('detailModal')) {
+      document.getElementById('detailModal').style.display = 'none';
+    }
+  });
+
+  // Bottom navigation
+   const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') window.location.href = "tdata_homepage.html";
+      // else if (dest === 'data') showToast("You're already on Data page", false);
+      else if (dest === 'data') window.location.href = "tdata_dataplans.html";
+      else if (dest === 'profile') window.location.href = "tdata_profile.html";
+    });
+  });
+
+  // Initialize
+  renderTransactions();
+  updateBalanceUI();
+</script>
+</body>
+</html>

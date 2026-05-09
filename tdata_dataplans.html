@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Connect · Buy Data Plans</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 20px 12px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      background: rgba(255,255,255,0.35);
+      transform: scale(0.94);
+    }
+
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .wallet-chip {
+      background: rgba(255,255,255,0.15);
+      border-radius: 60px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Main content */
+    .main-content {
+      padding: 20px;
+    }
+
+    /* Network tabs */
+    .network-tabs {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      scrollbar-width: thin;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    .network-tab {
+      background: #f0f4f9;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #2c4b5c;
+    }
+
+    .network-tab.active {
+      background: #0f6b7c;
+      color: white;
+    }
+
+    .network-tab:active {
+      transform: scale(0.96);
+    }
+
+    /* Plan category headers */
+    .plan-category {
+      margin: 20px 0 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e3b44;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 4px solid #0f6b7c;
+      padding-left: 12px;
+    }
+
+    /* Plan list */
+    .plan-list {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f7;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .plan-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 18px;
+      border-bottom: 1px solid #f0f4f9;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .plan-item:last-child {
+      border-bottom: none;
+    }
+
+    .plan-item:active {
+      background: #f8fafd;
+    }
+
+    .plan-info h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: #eef3fa;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 30px;
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .plan-info p {
+      font-size: 0.7rem;
+      color: #6f8f9f;
+      margin-top: 4px;
+    }
+
+    .plan-price {
+      font-weight: 700;
+      color: #166d7e;
+      font-size: 1rem;
+    }
+
+    /* Special offer banner */
+    .offer-banner {
+      background: linear-gradient(115deg, #fff6e5, #ffe9d4);
+      border-radius: 20px;
+      padding: 12px 16px;
+      margin: 16px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      border: 1px solid #ffddb0;
+    }
+
+    .offer-banner i {
+      font-size: 1.6rem;
+      color: #e67e22;
+    }
+
+    /* Toast notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1200;
+      display: none;
+      white-space: nowrap;
+      max-width: 90%;
+      white-space: normal;
+      text-align: center;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-top">
+      <div class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h2>Buy Data</h2>
+    </div>
+    <div class="wallet-chip">
+      <i class="fas fa-wallet"></i> <span id="walletBalance">₦6,250.00</span>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Network selector -->
+    <div class="network-tabs" id="networkTabs">
+      <div class="network-tab active" data-network="mtn">MTN</div>
+      <div class="network-tab" data-network="glo">Glo</div>
+      <div class="network-tab" data-network="airtel">Airtel</div>
+      <div class="network-tab" data-network="9mobile">9mobile</div>
+    </div>
+
+    <!-- Special offer banner -->
+    <div class="offer-banner">
+      <i class="fas fa-gift"></i>
+      <div><strong>🎉 Double data bonus</strong> – Buy any 2GB+ plan and get 500MB free! Limited offer.</div>
+    </div>
+
+    <!-- Dynamic data plans inserted via JS -->
+    <div id="plansContainer"></div>
+  </div>
+
+  <!-- Bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item active" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item" data-nav="history"><i class="fas fa-history"></i><span>History</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg">✔ Transaction successful</div>
+
+<script>
+  // ---------- Wallet State ----------
+  let walletBalance = 6250.00;
+  const balanceSpan = document.getElementById('walletBalance');
+  
+  // Load saved wallet balance from localStorage
+  function loadWalletBalance() {
+    const saved = localStorage.getItem('tdata_wallet_balance');
+    if (saved && !isNaN(parseFloat(saved))) {
+      walletBalance = parseFloat(saved);
+    }
+    updateBalanceUI();
+  }
+  
+  function saveWalletBalance() {
+    localStorage.setItem('tdata_wallet_balance', walletBalance.toString());
+  }
+  
+  function updateBalanceUI() {
+    balanceSpan.innerText = `₦${walletBalance.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  }
+  updateBalanceUI();
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#c0392b' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2200);
+  }
+
+  function deductFromWallet(amount, planName, network) {
+    if (walletBalance >= amount) {
+      walletBalance -= amount;
+      updateBalanceUI();
+      saveWalletBalance();
+      showToast(`✅ Purchased ${planName} (${network}) for ₦${amount.toLocaleString()}`);
+      
+      // Save transaction to localStorage for history page
+      const transaction = {
+        id: Date.now(),
+        type: "data",
+        title: `${planName} Data`,
+        description: `${network} Nigeria - ${planName} plan`,
+        amount: amount,
+        isCredit: false,
+        date: new Date().toISOString(),
+        status: "success",
+        reference: `TDC-DATA-${Date.now()}`,
+        network: network
+      };
+      
+      let transactions = JSON.parse(localStorage.getItem('tdata_transactions') || '[]');
+      transactions.unshift(transaction);
+      if (transactions.length > 50) transactions.pop();
+      localStorage.setItem('tdata_transactions', JSON.stringify(transactions));
+      
+      return true;
+    } else {
+      showToast(`❌ Insufficient balance. Please fund wallet.`, true);
+      return false;
+    }
+  }
+
+  // ----- Data plans by network (realistic Nigerian plans) -----
+  const plansDatabase = {
+    mtn: {
+      daily: [
+        { name: "MTN 100MB", size: "100MB", validity: "1 day", price: 100 },
+        { name: "MTN 500MB", size: "500MB", validity: "1 day", price: 200 },
+        { name: "MTN 1GB", size: "1GB", validity: "1 day", price: 350 }
+      ],
+      weekly: [
+        { name: "MTN 1.5GB", size: "1.5GB", validity: "7 days", price: 1000 },
+        { name: "MTN 2GB", size: "2GB", validity: "7 days", price: 1200 },
+        { name: "MTN 3GB", size: "3GB", validity: "7 days", price: 1500 }
+      ],
+      monthly: [
+        { name: "MTN 5GB", size: "5GB", validity: "30 days", price: 2500 },
+        { name: "MTN 10GB", size: "10GB", validity: "30 days", price: 4500 },
+        { name: "MTN 20GB", size: "20GB", validity: "30 days", price: 8000 }
+      ],
+      special: [
+        { name: "MTN Night Plan 1GB", size: "1GB Night", validity: "1 night", price: 250, badge: "🌙 Night" },
+        { name: "MTN Social Bundle", size: "WhatsApp/Facebook", validity: "7 days", price: 500, badge: "🔥 Social" }
+      ]
+    },
+    glo: {
+      daily: [
+        { name: "Glo 250MB", size: "250MB", validity: "1 day", price: 150 },
+        { name: "Glo 500MB", size: "500MB", validity: "1 day", price: 250 },
+        { name: "Glo 1GB", size: "1GB", validity: "1 day", price: 400 }
+      ],
+      weekly: [
+        { name: "Glo 2GB", size: "2GB", validity: "7 days", price: 1100 },
+        { name: "Glo 3GB", size: "3GB", validity: "7 days", price: 1500 },
+        { name: "Glo 4GB", size: "4GB", validity: "7 days", price: 2000 }
+      ],
+      monthly: [
+        { name: "Glo 6GB", size: "6GB", validity: "30 days", price: 3000 },
+        { name: "Glo 12GB", size: "12GB", validity: "30 days", price: 5500 },
+        { name: "Glo 25GB", size: "25GB", validity: "30 days", price: 10000 }
+      ],
+      special: [
+        { name: "Glo Yakata 1GB", size: "1GB + 1GB night", validity: "7 days", price: 650, badge: "⭐ Yakata" }
+      ]
+    },
+    airtel: {
+      daily: [
+        { name: "Airtel 100MB", size: "100MB", validity: "1 day", price: 100 },
+        { name: "Airtel 350MB", size: "350MB", validity: "1 day", price: 200 },
+        { name: "Airtel 1GB", size: "1GB", validity: "1 day", price: 350 }
+      ],
+      weekly: [
+        { name: "Airtel 1.5GB", size: "1.5GB", validity: "7 days", price: 1000 },
+        { name: "Airtel 3GB", size: "3GB", validity: "7 days", price: 1500 },
+        { name: "Airtel 5GB", size: "5GB", validity: "7 days", price: 2200 }
+      ],
+      monthly: [
+        { name: "Airtel 8GB", size: "8GB", validity: "30 days", price: 4000 },
+        { name: "Airtel 15GB", size: "15GB", validity: "30 days", price: 7000 },
+        { name: "Airtel 40GB", size: "40GB", validity: "30 days", price: 15000 }
+      ],
+      special: [
+        { name: "Airtel SmartTrybe", size: "1GB + 1GB Night", validity: "7 days", price: 800, badge: "🎓 Student" }
+      ]
+    },
+    "9mobile": {
+      daily: [
+        { name: "9mobile 200MB", size: "200MB", validity: "1 day", price: 120 },
+        { name: "9mobile 500MB", size: "500MB", validity: "1 day", price: 250 },
+        { name: "9mobile 1GB", size: "1GB", validity: "1 day", price: 400 }
+      ],
+      weekly: [
+        { name: "9mobile 2GB", size: "2GB", validity: "7 days", price: 1300 },
+        { name: "9mobile 3GB", size: "3GB", validity: "7 days", price: 1800 }
+      ],
+      monthly: [
+        { name: "9mobile 6GB", size: "6GB", validity: "30 days", price: 3500 },
+        { name: "9mobile 12GB", size: "12GB", validity: "30 days", price: 6000 }
+      ],
+      special: [
+        { name: "9mobile StreamMax", size: "YouTube/Netflix 2GB", validity: "7 days", price: 1000, badge: "📺 Video" }
+      ]
+    }
+  };
+
+  let currentNetwork = "mtn";
+
+  function renderPlans(networkKey) {
+    const container = document.getElementById('plansContainer');
+    const data = plansDatabase[networkKey];
+    if (!data) return;
+
+    let html = '';
+
+    // Daily plans
+    if (data.daily && data.daily.length) {
+      html += `<div class="plan-category"><i class="fas fa-sun"></i> Daily plans</div><div class="plan-list">`;
+      data.daily.forEach(plan => {
+        html += `
+          <div class="plan-item" data-plan-name="${plan.name}" data-price="${plan.price}" data-network="${networkKey.toUpperCase()}" data-validity="${plan.validity}">
+            <div class="plan-info">
+              <h4>${plan.name} <span class="badge">${plan.validity}</span></h4>
+              <p>${plan.size} · instant delivery</p>
+            </div>
+            <div class="plan-price">₦${plan.price.toLocaleString()}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // Weekly plans
+    if (data.weekly && data.weekly.length) {
+      html += `<div class="plan-category"><i class="fas fa-calendar-week"></i> Weekly plans</div><div class="plan-list">`;
+      data.weekly.forEach(plan => {
+        html += `
+          <div class="plan-item" data-plan-name="${plan.name}" data-price="${plan.price}" data-network="${networkKey.toUpperCase()}" data-validity="${plan.validity}">
+            <div class="plan-info">
+              <h4>${plan.name} <span class="badge">${plan.validity}</span></h4>
+              <p>${plan.size} · rollover available</p>
+            </div>
+            <div class="plan-price">₦${plan.price.toLocaleString()}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // Monthly plans
+    if (data.monthly && data.monthly.length) {
+      html += `<div class="plan-category"><i class="fas fa-calendar-alt"></i> Monthly plans</div><div class="plan-list">`;
+      data.monthly.forEach(plan => {
+        html += `
+          <div class="plan-item" data-plan-name="${plan.name}" data-price="${plan.price}" data-network="${networkKey.toUpperCase()}" data-validity="${plan.validity}">
+            <div class="plan-info">
+              <h4>${plan.name} <span class="badge">${plan.validity}</span></h4>
+              <p>${plan.size} · best value</p>
+            </div>
+            <div class="plan-price">₦${plan.price.toLocaleString()}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    // Special bundles
+    if (data.special && data.special.length) {
+      html += `<div class="plan-category"><i class="fas fa-star"></i> Special bundles</div><div class="plan-list">`;
+      data.special.forEach(plan => {
+        const badgeHtml = plan.badge ? `<span class="badge">${plan.badge}</span>` : '';
+        html += `
+          <div class="plan-item" data-plan-name="${plan.name}" data-price="${plan.price}" data-network="${networkKey.toUpperCase()}" data-validity="${plan.validity || 'Limited'}">
+            <div class="plan-info">
+              <h4>${plan.name} ${badgeHtml}</h4>
+              <p>${plan.size} · exclusive offer</p>
+            </div>
+            <div class="plan-price">₦${plan.price.toLocaleString()}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    container.innerHTML = html;
+
+    // Attach click event to each plan item
+    document.querySelectorAll('.plan-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const planName = item.getAttribute('data-plan-name');
+        const price = parseFloat(item.getAttribute('data-price'));
+        const network = item.getAttribute('data-network');
+        if (planName && !isNaN(price)) {
+          deductFromWallet(price, planName, network);
+        }
+      });
+    });
+  }
+
+  // Network tab switching
+  const tabs = document.querySelectorAll('.network-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const networkKey = tab.getAttribute('data-network');
+      currentNetwork = networkKey;
+      renderPlans(networkKey);
+    });
+  });
+
+  // Initial render
+  renderPlans('mtn');
+
+  // Back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = "tdata_homepage.html";
+  });
+
+  // Bottom navigation
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') window.location.href = "tdata_homepage.html";
+      else if (dest === 'data') showToast("You're already on Data page", false);
+      else if (dest === 'history') window.location.href = "tdata_history.html";
+      else if (dest === 'profile') window.location.href = "tdata_profile.html";
+    });
+  });
+
+  // Load wallet balance on page load
+  loadWalletBalance();
+</script>
+</body>
+</html>

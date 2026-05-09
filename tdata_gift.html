@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Connect · Airtime & Gifting</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      padding: 20px 20px 12px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .back-btn {
+      background: rgba(255,255,255,0.2);
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:active {
+      background: rgba(255,255,255,0.35);
+      transform: scale(0.94);
+    }
+
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .wallet-chip {
+      background: rgba(255,255,255,0.15);
+      border-radius: 60px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    /* Tab navigation */
+    .service-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px 20px 0;
+      background: white;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    .service-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      font-weight: 600;
+      color: #8ea3b2;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: 0.2s;
+    }
+
+    .service-tab.active {
+      color: #0f6b7c;
+      border-bottom-color: #0f6b7c;
+    }
+
+    /* Tab content */
+    .tab-content {
+      display: none;
+      padding: 20px;
+      animation: fade 0.2s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(5px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+
+    /* Form groups */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2c4b5c;
+    }
+
+    .input-icon {
+      position: relative;
+    }
+
+    .input-icon i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #98b1c2;
+    }
+
+    .input-icon input, .input-icon select {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 1.5px solid #e2e9f0;
+      border-radius: 60px;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      background: white;
+    }
+
+    .input-icon input:focus, .input-icon select:focus {
+      outline: none;
+      border-color: #0f6b7c;
+    }
+
+    /* Amount buttons */
+    .amount-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .amount-btn {
+      background: #f0f4f9;
+      border: none;
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .amount-btn:active {
+      background: #e2eaf1;
+      transform: scale(0.96);
+    }
+
+    /* Data plans grid */
+    .data-plans-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .data-plan-card {
+      background: #f8fafd;
+      border: 1px solid #eef2f8;
+      border-radius: 20px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .data-plan-card:active {
+      background: #eef3fc;
+      transform: scale(0.97);
+    }
+
+    .data-plan-card.selected {
+      border-color: #0f6b7c;
+      background: #eef3fc;
+    }
+
+    .data-plan-size {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #1e3b44;
+    }
+
+    .data-plan-price {
+      font-size: 0.8rem;
+      color: #0f6b7c;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .data-plan-validity {
+      font-size: 0.65rem;
+      color: #8ea3b2;
+      margin-top: 4px;
+    }
+
+    /* Beneficiary section */
+    .beneficiary-select {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .beneficiary-select select {
+      flex: 1;
+      padding: 12px;
+      border-radius: 60px;
+      border: 1.5px solid #e2e9f0;
+    }
+
+    .add-beneficiary-icon {
+      background: #0f6b7c;
+      width: 46px;
+      height: 46px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Action button */
+    .action-btn {
+      background: #0f6b7c;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .action-btn:active {
+      transform: scale(0.97);
+      background: #0c5a68;
+    }
+
+    /* Quick recipients section */
+    .quick-recipients {
+      margin: 20px 0;
+    }
+
+    .section-subtitle {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #2c4b5c;
+      margin-bottom: 12px;
+    }
+
+    .recipients-list {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .recipient-chip {
+      background: #f0f4f9;
+      padding: 8px 16px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .recipient-chip:active {
+      background: #e2eaf1;
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1100;
+      display: none;
+    }
+
+    /* Bottom nav */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+    }
+
+    /* Modal */
+    .modal-mask {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 340px;
+      width: 85%;
+      border-radius: 32px;
+      padding: 24px;
+    }
+
+    .modal-card h3 {
+      margin-bottom: 16px;
+    }
+
+    .modal-card input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 60px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      background: #0f6b7c;
+      border: none;
+      color: white;
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-btn.cancel {
+      background: #aaa;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="header">
+    <div class="header-top">
+      <div class="back-btn" id="backBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <h2>Airtime & Gifting</h2>
+    </div>
+    <div class="wallet-chip">
+      <i class="fas fa-wallet"></i> <span id="walletBalance">₦6,250.00</span>
+    </div>
+  </div>
+
+  <!-- Service Tabs -->
+  <div class="service-tabs">
+    <div class="service-tab active" data-tab="airtime">Airtime</div>
+    <div class="service-tab" data-tab="gift-data">Gift Data</div>
+  </div>
+
+  <!-- Airtime Tab -->
+  <div id="airtimeTab" class="tab-content active">
+    <div class="form-group">
+      <label>Send to</label>
+      <div class="beneficiary-select">
+        <select id="airtimeRecipientSelect">
+          <option value="self">📱 Myself (08012345678)</option>
+          <option value="new">➕ New number</option>
+        </select>
+        <div class="add-beneficiary-icon" id="addAirtimeRecipientBtn">
+          <i class="fas fa-plus"></i>
+        </div>
+      </div>
+    </div>
+
+    <div id="newNumberInput" style="display: none;">
+      <div class="form-group">
+        <label>Phone number</label>
+        <div class="input-icon">
+          <i class="fas fa-phone-alt"></i>
+          <input type="tel" id="customPhoneNumber" placeholder="08012345678">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select amount</label>
+      <div class="amount-grid">
+        <button class="amount-btn" data-amount="100">₦100</button>
+        <button class="amount-btn" data-amount="200">₦200</button>
+        <button class="amount-btn" data-amount="500">₦500</button>
+        <button class="amount-btn" data-amount="1000">₦1000</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Or enter custom amount</label>
+      <div class="input-icon">
+        <i class="fas fa-naira-sign"></i>
+        <input type="number" id="customAirtimeAmount" placeholder="Enter amount">
+      </div>
+    </div>
+
+    <div class="quick-recipients">
+      <div class="section-subtitle">Quick recipients</div>
+      <div class="recipients-list" id="airtimeRecipientsList"></div>
+    </div>
+
+    <button class="action-btn" id="buyAirtimeBtn">
+      <i class="fas fa-phone-alt"></i> Buy Airtime
+    </button>
+  </div>
+
+  <!-- Gift Data Tab -->
+  <div id="giftDataTab" class="tab-content">
+    <div class="form-group">
+      <label>Send data to</label>
+      <div class="beneficiary-select">
+        <select id="dataRecipientSelect">
+          <option value="self">📱 Myself (08012345678)</option>
+          <option value="new">➕ New number</option>
+        </select>
+        <div class="add-beneficiary-icon" id="addDataRecipientBtn">
+          <i class="fas fa-plus"></i>
+        </div>
+      </div>
+    </div>
+
+    <div id="newDataNumberInput" style="display: none;">
+      <div class="form-group">
+        <label>Phone number</label>
+        <div class="input-icon">
+          <i class="fas fa-phone-alt"></i>
+          <input type="tel" id="customDataPhone" placeholder="08012345678">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select network</label>
+      <div class="input-icon">
+        <i class="fas fa-tower-cell"></i>
+        <select id="dataNetwork">
+          <option value="MTN">MTN</option>
+          <option value="Glo">Glo</option>
+          <option value="Airtel">Airtel</option>
+          <option value="9mobile">9mobile</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select data plan</label>
+      <div class="data-plans-grid" id="dataPlansGrid">
+        <!-- Dynamic data plans will be loaded here -->
+      </div>
+    </div>
+
+    <div class="quick-recipients">
+      <div class="section-subtitle">Quick recipients</div>
+      <div class="recipients-list" id="dataRecipientsList"></div>
+    </div>
+
+    <button class="action-btn" id="giftDataBtn">
+      <i class="fas fa-gift"></i> Gift Data
+    </button>
+  </div>
+
+  <!-- Bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item active" data-nav="gift"><i class="fas fa-gift"></i><span>Gift</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<!-- Add Beneficiary Modal -->
+<div id="beneficiaryModal" class="modal-mask">
+  <div class="modal-card">
+    <h3><i class="fas fa-user-plus"></i> Save Recipient</h3>
+    <input type="text" id="beneficiaryName" placeholder="Name (e.g., Mom)">
+    <input type="tel" id="beneficiaryPhone" placeholder="Phone number">
+    <div class="modal-buttons">
+      <button class="modal-btn" id="saveBeneficiaryBtn">Save</button>
+      <button class="modal-btn cancel" id="closeBeneficiaryModal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg"></div>
+
+<script>
+  // Wallet state
+  let walletBalance = 6250.00;
+  const balanceSpan = document.getElementById('walletBalance');
+  
+  // Beneficiaries storage
+  let beneficiaries = {
+    airtime: [],
+    data: []
+  };
+  
+  // Load from localStorage
+  if (localStorage.getItem('tdata_beneficiaries')) {
+    beneficiaries = JSON.parse(localStorage.getItem('tdata_beneficiaries'));
+  }
+  
+  function saveBeneficiaries() {
+    localStorage.setItem('tdata_beneficiaries', JSON.stringify(beneficiaries));
+  }
+  
+  function updateBalanceUI() {
+    balanceSpan.innerText = `₦${walletBalance.toLocaleString('en-NG', {minimumFractionDigits: 2})}`;
+  }
+  updateBalanceUI();
+  
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#c0392b' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2000);
+  }
+  
+  function deductFromWallet(amount, description) {
+    if (walletBalance >= amount) {
+      walletBalance -= amount;
+      updateBalanceUI();
+      showToast(`✅ ${description} successful! ₦${amount.toLocaleString()} deducted`);
+      return true;
+    } else {
+      showToast(`❌ Insufficient balance. Please fund wallet.`, true);
+      return false;
+    }
+  }
+  
+  // Data plans
+  const dataPlans = {
+    MTN: [
+      { size: "500MB", price: 200, validity: "1 day" },
+      { size: "1GB", price: 350, validity: "1 day" },
+      { size: "1.5GB", price: 1000, validity: "7 days" },
+      { size: "3GB", price: 1500, validity: "7 days" },
+      { size: "5GB", price: 2500, validity: "30 days" },
+      { size: "10GB", price: 4500, validity: "30 days" }
+    ],
+    Glo: [
+      { size: "250MB", price: 150, validity: "1 day" },
+      { size: "500MB", price: 250, validity: "1 day" },
+      { size: "2GB", price: 1100, validity: "7 days" },
+      { size: "3GB", price: 1500, validity: "7 days" },
+      { size: "6GB", price: 3000, validity: "30 days" },
+      { size: "12GB", price: 5500, validity: "30 days" }
+    ],
+    Airtel: [
+      { size: "100MB", price: 100, validity: "1 day" },
+      { size: "1GB", price: 350, validity: "1 day" },
+      { size: "1.5GB", price: 1000, validity: "7 days" },
+      { size: "3GB", price: 1500, validity: "7 days" },
+      { size: "8GB", price: 4000, validity: "30 days" },
+      { size: "15GB", price: 7000, validity: "30 days" }
+    ],
+    "9mobile": [
+      { size: "200MB", price: 120, validity: "1 day" },
+      { size: "1GB", price: 400, validity: "1 day" },
+      { size: "2GB", price: 1300, validity: "7 days" },
+      { size: "3GB", price: 1800, validity: "7 days" },
+      { size: "6GB", price: 3500, validity: "30 days" }
+    ]
+  };
+  
+  let selectedDataPlan = null;
+  
+  function renderDataPlans() {
+    const network = document.getElementById('dataNetwork').value;
+    const plans = dataPlans[network];
+    const container = document.getElementById('dataPlansGrid');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    plans.forEach(plan => {
+      const card = document.createElement('div');
+      card.className = 'data-plan-card';
+      card.innerHTML = `
+        <div class="data-plan-size">${plan.size}</div>
+        <div class="data-plan-price">₦${plan.price.toLocaleString()}</div>
+        <div class="data-plan-validity">${plan.validity}</div>
+      `;
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.data-plan-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedDataPlan = plan;
+      });
+      container.appendChild(card);
+    });
+  }
+  
+  document.getElementById('dataNetwork')?.addEventListener('change', renderDataPlans);
+  renderDataPlans();
+  
+  // Tab switching
+  const tabs = document.querySelectorAll('.service-tab');
+  const airtimeTab = document.getElementById('airtimeTab');
+  const giftDataTab = document.getElementById('giftDataTab');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabId = tab.getAttribute('data-tab');
+      if (tabId === 'airtime') {
+        airtimeTab.classList.add('active');
+        giftDataTab.classList.remove('active');
+      } else {
+        giftDataTab.classList.add('active');
+        airtimeTab.classList.remove('active');
+      }
+    });
+  });
+  
+  // Airtime recipient handling
+  const airtimeSelect = document.getElementById('airtimeRecipientSelect');
+  const newNumberDiv = document.getElementById('newNumberInput');
+  
+  airtimeSelect.addEventListener('change', () => {
+    newNumberDiv.style.display = airtimeSelect.value === 'new' ? 'block' : 'none';
+  });
+  
+  // Data recipient handling
+  const dataSelect = document.getElementById('dataRecipientSelect');
+  const newDataNumberDiv = document.getElementById('newDataNumberInput');
+  
+  dataSelect.addEventListener('change', () => {
+    newDataNumberDiv.style.display = dataSelect.value === 'new' ? 'block' : 'none';
+  });
+  
+  // Airtime amount buttons
+  document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const amount = btn.getAttribute('data-amount');
+      document.getElementById('customAirtimeAmount').value = amount;
+    });
+  });
+  
+  // Buy Airtime
+  document.getElementById('buyAirtimeBtn').addEventListener('click', () => {
+    let phoneNumber = '';
+    const recipientType = airtimeSelect.value;
+    
+    if (recipientType === 'self') {
+      phoneNumber = '08012345678';
+    } else if (recipientType === 'new') {
+      phoneNumber = document.getElementById('customPhoneNumber').value.trim();
+      if (!phoneNumber) {
+        showToast("Please enter a phone number", true);
+        return;
+      }
+    }
+    
+    let amount = parseInt(document.getElementById('customAirtimeAmount').value);
+    if (isNaN(amount) || amount <= 0) {
+      showToast("Please select or enter a valid amount", true);
+      return;
+    }
+    
+    if (amount < 50) {
+      showToast("Minimum airtime is ₦50", true);
+      return;
+    }
+    
+    deductFromWallet(amount, `Airtime purchase for ${phoneNumber}`);
+    document.getElementById('customAirtimeAmount').value = '';
+  });
+  
+  // Gift Data
+  document.getElementById('giftDataBtn').addEventListener('click', () => {
+    let phoneNumber = '';
+    const recipientType = dataSelect.value;
+    
+    if (recipientType === 'self') {
+      phoneNumber = '08012345678';
+    } else if (recipientType === 'new') {
+      phoneNumber = document.getElementById('customDataPhone').value.trim();
+      if (!phoneNumber) {
+        showToast("Please enter a phone number", true);
+        return;
+      }
+    }
+    
+    const network = document.getElementById('dataNetwork').value;
+    if (!selectedDataPlan) {
+      showToast("Please select a data plan", true);
+      return;
+    }
+    
+    deductFromWallet(selectedDataPlan.price, `${network} ${selectedDataPlan.size} data gifted to ${phoneNumber}`);
+    selectedDataPlan = null;
+    document.querySelectorAll('.data-plan-card').forEach(c => c.classList.remove('selected'));
+  });
+  
+  // Render recipients lists
+  function renderRecipients() {
+    const airtimeList = document.getElementById('airtimeRecipientsList');
+    const dataList = document.getElementById('dataRecipientsList');
+    
+    if (airtimeList) {
+      airtimeList.innerHTML = '';
+      beneficiaries.airtime.forEach(ben => {
+        const chip = document.createElement('div');
+        chip.className = 'recipient-chip';
+        chip.innerHTML = `<i class="fas fa-user"></i> ${ben.name}`;
+        chip.addEventListener('click', () => {
+          airtimeSelect.value = 'new';
+          document.getElementById('customPhoneNumber').value = ben.phone;
+          newNumberDiv.style.display = 'block';
+        });
+        airtimeList.appendChild(chip);
+      });
+    }
+    
+    if (dataList) {
+      dataList.innerHTML = '';
+      beneficiaries.data.forEach(ben => {
+        const chip = document.createElement('div');
+        chip.className = 'recipient-chip';
+        chip.innerHTML = `<i class="fas fa-user"></i> ${ben.name}`;
+        chip.addEventListener('click', () => {
+          dataSelect.value = 'new';
+          document.getElementById('customDataPhone').value = ben.phone;
+          newDataNumberDiv.style.display = 'block';
+        });
+        dataList.appendChild(chip);
+      });
+    }
+  }
+  
+  // Modal handling
+  let currentModalType = null;
+  const modal = document.getElementById('beneficiaryModal');
+  
+  document.getElementById('addAirtimeRecipientBtn')?.addEventListener('click', () => {
+    currentModalType = 'airtime';
+    modal.style.display = 'flex';
+  });
+  
+  document.getElementById('addDataRecipientBtn')?.addEventListener('click', () => {
+    currentModalType = 'data';
+    modal.style.display = 'flex';
+  });
+  
+  document.getElementById('saveBeneficiaryBtn')?.addEventListener('click', () => {
+    const name = document.getElementById('beneficiaryName').value.trim();
+    const phone = document.getElementById('beneficiaryPhone').value.trim();
+    
+    if (!name || !phone) {
+      showToast("Please fill all fields", true);
+      return;
+    }
+    
+    if (currentModalType === 'airtime') {
+      beneficiaries.airtime.push({ name, phone });
+    } else if (currentModalType === 'data') {
+      beneficiaries.data.push({ name, phone });
+    }
+    
+    saveBeneficiaries();
+    renderRecipients();
+    showToast("Recipient saved!");
+    modal.style.display = 'none';
+    document.getElementById('beneficiaryName').value = '';
+    document.getElementById('beneficiaryPhone').value = '';
+  });
+  
+  document.getElementById('closeBeneficiaryModal')?.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  
+  // Back button
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = "tdata_homepage.html";
+  });
+  
+  // Bottom navigation
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') window.location.href = "tdata_homepage.html";
+      else if (dest === 'data') window.location.href = "tdata_dataplans.html";
+      else if (dest === 'gift') showToast("You're already on Gift page", false);
+      else if (dest === 'profile') window.location.href = "tdata_profile.html";
+    });
+  });
+  
+  renderRecipients();
+</script>
+</body>
+</html>

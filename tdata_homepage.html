@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>T Data Hub · Dashboard</title>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7fc;
+      padding: 20px 16px 40px;
+    }
+
+    .app-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Header with gradient */
+    .header {
+      padding: 24px 20px 20px;
+      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
+      color: white;
+    }
+
+    .greeting {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .greeting h4 {
+      font-weight: 500;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .greeting h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .profile-icon {
+      background: rgba(255,255,255,0.2);
+      width: 46px;
+      height: 46px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+    }
+
+    /* Wallet card */
+    .wallet-card {
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 18px 20px;
+      margin: 8px 0 10px;
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .wallet-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      opacity: 0.8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .balance {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 8px 0 4px;
+      word-break: break-word;
+    }
+
+    .wallet-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .btn-sm {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      padding: 8px 18px;
+      border-radius: 40px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.75rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-sm:active {
+      transform: scale(0.96);
+      background: rgba(255,255,255,0.35);
+    }
+
+    /* Main content */
+    .main-content {
+      padding: 20px;
+    }
+
+    /* Section titles */
+    .section-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e3b44;
+    }
+
+    /* Quick actions grid */
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .quick-card {
+      background: #f0f4f9;
+      border-radius: 20px;
+      text-align: center;
+      padding: 14px 6px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .quick-card i {
+      font-size: 1.6rem;
+      color: #0f6b7c;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .quick-card span {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #2c4b5c;
+    }
+
+    .quick-card:active {
+      background: #e2eaf1;
+      transform: scale(0.96);
+    }
+
+    /* Networks row (data providers) */
+    .networks-slider {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      scrollbar-width: thin;
+    }
+
+    .network-chip {
+      background: #ffffff;
+      border: 1px solid #dce5ec;
+      border-radius: 100px;
+      padding: 10px 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .network-chip:active {
+      background: #eef3fc;
+      border-color: #0f6b7c;
+    }
+
+    /* Popular plans list */
+    .plan-list {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f7;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .plan-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid #f0f4f9;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .plan-item:last-child {
+      border-bottom: none;
+    }
+
+    .plan-item:active {
+      background: #f8fafd;
+    }
+
+    .plan-info h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .plan-info p {
+      font-size: 0.65rem;
+      color: #6f8f9f;
+      margin-top: 2px;
+    }
+
+    .plan-price {
+      font-weight: 700;
+      color: #166d7e;
+    }
+
+    /* Bill payment grid */
+    .bill-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .bill-card {
+      background: #f9fbfd;
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #e2e9f0;
+      cursor: pointer;
+      transition: 0.1s;
+    }
+
+    .bill-card:active {
+      background: #eef3fc;
+    }
+
+    .bill-card i {
+      font-size: 1.8rem;
+      color: #0f6b7c;
+    }
+
+    .bill-card div h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .bill-card div p {
+      font-size: 0.65rem;
+      color: #5f7f90;
+    }
+
+    /* Recent transactions */
+    .recent-list {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #eef2f7;
+      overflow: hidden;
+    }
+
+    .transaction {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f4f9;
+    }
+
+    .trans-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .trans-icon {
+      background: #eef3fa;
+      width: 38px;
+      height: 38px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f6b7c;
+    }
+
+    .trans-detail h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .trans-detail p {
+      font-size: 0.65rem;
+      color: #6f8e9e;
+    }
+
+    .trans-amount {
+      font-weight: 700;
+    }
+
+    .positive {
+      color: #2c9c6c;
+    }
+
+    .negative {
+      color: #c0392b;
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      background: #ffffff;
+      border-top: 1px solid #eef2f8;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 20px 20px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8ea3b2;
+      font-size: 0.7rem;
+      transition: 0.1s;
+      cursor: pointer;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #0f6b7c;
+      font-weight: 500;
+    }
+
+    .nav-item:active {
+      transform: scale(0.94);
+    }
+
+    /* Toast notification */
+    .toast-msg {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2f3a;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 60px;
+      font-size: 0.8rem;
+      z-index: 1200;
+      display: none;
+      white-space: nowrap;
+      max-width: 90%;
+      white-space: normal;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="greeting">
+      <div>
+        <h4>Welcome back,</h4>
+        <h2>Chioma 👋</h2>
+      </div>
+      <div class="profile-icon" id="profileIcon">
+        <i class="fas fa-user-circle"></i>
+      </div>
+    </div>
+    <div class="wallet-card">
+      <div class="wallet-label">
+        <i class="fas fa-wallet"></i> <span>Wallet Balance</span>
+      </div>
+      <div class="balance" id="balanceDisplay">₦6,250.00</div>
+      <div class="wallet-actions">
+        <button class="btn-sm" id="fundWalletBtn"><i class="fas fa-plus-circle"></i> Fund</button>
+        <button class="btn-sm" id="withdrawBtn"><i class="fas fa-arrow-down"></i> Withdraw</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Quick access -->
+    <div class="section-title">
+      <i class="fas fa-bolt"></i> <span>Quick actions</span>
+    </div>
+    <div class="quick-grid">
+      <div class="quick-card" data-action="data">
+        <i class="fas fa-sim-card"></i>
+        <span>Buy Data</span>
+      </div>
+      <div class="quick-card" data-action="airtime">
+        <i class="fas fa-phone-alt"></i>
+        <span>Airtime</span>
+      </div>
+      <div class="quick-card" data-action="electricity">
+        <i class="fas fa-lightbulb"></i>
+        <span>Light Bill</span>
+      </div>
+      <div class="quick-card" data-action="dstv">
+        <i class="fas fa-tv"></i>
+        <span>DSTV/GOTv</span>
+      </div>
+    </div>
+
+    <!-- Networks -->
+    <div class="section-title">
+      <i class="fas fa-tower-cell"></i> <span>Buy data instantly</span>
+    </div>
+    <div class="networks-slider" id="networkList">
+      <div class="network-chip" data-network="MTN"><i class="fas fa-signal"></i> MTN</div>
+      <div class="network-chip" data-network="Glo"><i class="fas fa-globe"></i> Glo</div>
+      <div class="network-chip" data-network="Airtel"><i class="fas fa-wifi"></i> Airtel</div>
+      <div class="network-chip" data-network="9mobile"><i class="fas fa-mobile-alt"></i> 9mobile</div>
+    </div>
+
+    <!-- Popular plans preview -->
+    <div class="plan-list" id="popularPlans">
+      <div class="plan-item" data-plan="MTN 1.5GB" data-price="1000" data-network="MTN">
+        <div class="plan-info">
+          <h4>MTN 1.5GB</h4>
+          <p>Daily · 1 day</p>
+        </div>
+        <div class="plan-price">₦1,000</div>
+      </div>
+      <div class="plan-item" data-plan="Glo 2GB" data-price="1100" data-network="Glo">
+        <div class="plan-info">
+          <h4>Glo 2GB</h4>
+          <p>2 days + bonus</p>
+        </div>
+        <div class="plan-price">₦1,100</div>
+      </div>
+      <div class="plan-item" data-plan="Airtel 3GB" data-price="1500" data-network="Airtel">
+        <div class="plan-info">
+          <h4>Airtel 3GB</h4>
+          <p>Weekly plan</p>
+        </div>
+        <div class="plan-price">₦1,500</div>
+      </div>
+      <div class="plan-item" data-plan="9mobile 1GB" data-price="900" data-network="9mobile">
+        <div class="plan-info">
+          <h4>9mobile 1GB</h4>
+          <p>7 days validity</p>
+        </div>
+        <div class="plan-price">₦900</div>
+      </div>
+    </div>
+
+    <!-- Bill payments -->
+    <div class="section-title">
+      <i class="fas fa-receipt"></i> <span>Pay bills</span>
+    </div>
+    <div class="bill-grid">
+      <div class="bill-card" data-bill="electricity">
+        <i class="fas fa-bolt"></i>
+        <div><h4>Electricity</h4><p>Ikeja, Eko, Kano...</p></div>
+      </div>
+      <div class="bill-card" data-bill="dstv">
+        <i class="fas fa-satellite-dish"></i>
+        <div><h4>DSTV / GOtv</h4><p>Pay & renew</p></div>
+      </div>
+      <div class="bill-card" data-bill="waec">
+        <i class="fas fa-graduation-cap"></i>
+        <div><h4>WAEC/NECO</h4><p>Result checker</p></div>
+      </div>
+      <div class="bill-card" data-bill="airtime_self">
+        <i class="fas fa-user-check"></i>
+        <div><h4>Airtime</h4><p>Self & others</p></div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="section-title">
+      <i class="fas fa-history"></i> <span>Recent activity</span>
+    </div>
+    <div class="recent-list" id="recentTransactions">
+      <div class="transaction">
+        <div class="trans-left">
+          <div class="trans-icon"><i class="fas fa-sim-card"></i></div>
+          <div class="trans-detail">
+            <h4>MTN 1.5GB Data</h4>
+            <p>Today, 10:23 AM</p>
+          </div>
+        </div>
+        <div class="trans-amount negative">-₦1,000</div>
+      </div>
+      <div class="transaction">
+        <div class="trans-left">
+          <div class="trans-icon"><i class="fas fa-lightbulb"></i></div>
+          <div class="trans-detail">
+            <h4>Electricity (Ikeja)</h4>
+            <p>Yesterday, 5:15 PM</p>
+          </div>
+        </div>
+        <div class="trans-amount negative">-₦4,500</div>
+      </div>
+      <div class="transaction">
+        <div class="trans-left">
+          <div class="trans-icon"><i class="fas fa-wallet"></i></div>
+          <div class="trans-detail">
+            <h4>Wallet Funding</h4>
+            <p>Yesterday, 12:05 PM</p>
+          </div>
+        </div>
+        <div class="trans-amount positive">+₦5,000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-nav="home"><i class="fas fa-home"></i><span>Home</span></div>
+    <div class="nav-item" data-nav="data"><i class="fas fa-tower-cell"></i><span>Data</span></div>
+    <div class="nav-item" data-nav="history"><i class="fas fa-chart-line"></i><span>History</span></div>
+    <div class="nav-item" data-nav="profile"><i class="fas fa-user"></i><span>Profile</span></div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast-msg">✔ Transaction successful</div>
+
+<script>
+  // ---------- Wallet State ----------
+  let walletBalance = 6250.00;
+  const balanceElement = document.getElementById('balanceDisplay');
+  const recentContainer = document.getElementById('recentTransactions');
+
+  function updateBalanceUI() {
+    balanceElement.innerText = `₦${walletBalance.toLocaleString('en-NG', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  }
+  updateBalanceUI();
+
+  function showToast(message, isError = false) {
+    const toast = document.getElementById('toastMsg');
+    toast.innerText = message;
+    toast.style.background = isError ? '#b33' : '#1e2f3a';
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 2200);
+  }
+
+  function addRecentTransaction(description, amount, isCredit, networkOrService = '') {
+    const newTrans = document.createElement('div');
+    newTrans.className = 'transaction';
+    let iconHtml = '<i class="fas fa-sim-card"></i>';
+    let serviceLabel = description;
+    if (description.includes('Airtime')) iconHtml = '<i class="fas fa-phone-alt"></i>';
+    else if (description.includes('Electricity') || description.includes('Light')) iconHtml = '<i class="fas fa-lightbulb"></i>';
+    else if (description.includes('DSTV') || description.includes('GOTv')) iconHtml = '<i class="fas fa-tv"></i>';
+    else if (description.includes('Funding')) iconHtml = '<i class="fas fa-wallet"></i>';
+    else if (description.includes('Withdraw')) iconHtml = '<i class="fas fa-university"></i>';
+    
+    const amountClass = isCredit ? 'positive' : 'negative';
+    const sign = isCredit ? '+' : '-';
+    newTrans.innerHTML = `
+      <div class="trans-left">
+        <div class="trans-icon">${iconHtml}</div>
+        <div class="trans-detail">
+          <h4>${serviceLabel}</h4>
+          <p>Just now</p>
+        </div>
+      </div>
+      <div class="trans-amount ${amountClass}">${sign}₦${amount.toLocaleString()}</div>
+    `;
+    recentContainer.insertBefore(newTrans, recentContainer.firstChild);
+    if (recentContainer.children.length > 5) {
+      recentContainer.removeChild(recentContainer.lastChild);
+    }
+  }
+
+  function deductFromWallet(amount, description) {
+    if (walletBalance >= amount) {
+      walletBalance -= amount;
+      updateBalanceUI();
+      addRecentTransaction(description, amount, false);
+      showToast(`✅ ${description} successful! ₦${amount.toLocaleString()} deducted`);
+      return true;
+    } else {
+      showToast(`❌ Insufficient balance. Please fund wallet.`, true);
+      return false;
+    }
+  }
+
+  function fundWalletDemo(amount) {
+    if (amount > 0) {
+      walletBalance += amount;
+      updateBalanceUI();
+      addRecentTransaction(`Wallet funding (₦${amount})`, amount, true);
+      showToast(`🎉 Wallet funded with ₦${amount.toLocaleString()}!`);
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- Quick Actions ----------
+  document.querySelectorAll('.quick-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const action = card.getAttribute('data-action');
+      if (action === 'data') {
+        window.location.href = "tdata_dataplans.html";
+      } else if (action === 'airtime') {
+        let amt = prompt("Enter airtime amount (₦)", "200");
+        if (amt && !isNaN(parseFloat(amt)) && parseFloat(amt) > 0) {
+          deductFromWallet(parseFloat(amt), `Airtime purchase (₦${amt})`);
+        } else if (amt) showToast("Invalid amount", true);
+      } else if (action === 'electricity') {
+        let meter = prompt("Enter Meter Number", "1234567890");
+        if (meter && meter.trim()) {
+          let amt = prompt("Amount to pay (₦)", "2000");
+          if (amt && !isNaN(parseFloat(amt))) {
+            deductFromWallet(parseFloat(amt), `Electricity bill payment`);
+          }
+        }
+      } else if (action === 'dstv') {
+        let smartcard = prompt("DSTV/GOTv Smartcard number", "12345678");
+        if (smartcard && smartcard.trim()) {
+          let amt = prompt("Subscription amount (₦)", "4500");
+          if (amt && !isNaN(parseFloat(amt))) {
+            deductFromWallet(parseFloat(amt), `DSTV/GOTv renewal`);
+          }
+        }
+      }
+    });
+  });
+
+  // ---------- Network chips (demo selection) ----------
+  document.querySelectorAll('.network-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const net = chip.getAttribute('data-network');
+      showToast(`Selected ${net}. Go to Data page to buy plans`, false);
+      setTimeout(() => {
+        window.location.href = "tdata_dataplans.html";
+      }, 800);
+    });
+  });
+
+  // ---------- Popular plans purchase ----------
+  document.querySelectorAll('.plan-item').forEach(plan => {
+    plan.addEventListener('click', () => {
+      const planName = plan.getAttribute('data-plan');
+      const price = parseFloat(plan.getAttribute('data-price'));
+      const network = plan.getAttribute('data-network');
+      if (planName && !isNaN(price)) {
+        deductFromWallet(price, `${planName} Data (${network})`);
+      }
+    });
+  });
+
+  // ---------- Bill cards ----------
+  document.querySelectorAll('.bill-card').forEach(bill => {
+    bill.addEventListener('click', () => {
+      const type = bill.getAttribute('data-bill');
+      if (type === 'electricity') {
+        let meter = prompt("Meter number", "IKEJA-102030");
+        if (meter) {
+          let amt = prompt("Amount (₦)", "2500");
+          if (amt && !isNaN(parseFloat(amt))) deductFromWallet(parseFloat(amt), "Electricity bill");
+        }
+      } else if (type === 'dstv') {
+        let sc = prompt("Smartcard number", "12345678");
+        if (sc) {
+          let amt = prompt("Amount (₦)", "4500");
+          if (amt && !isNaN(parseFloat(amt))) deductFromWallet(parseFloat(amt), "DSTV subscription");
+        }
+      } else if (type === 'waec') {
+        if (confirm("Purchase WAEC result checker PIN for ₦1,500?")) {
+          deductFromWallet(1500, "WAEC Result Checker");
+        }
+      } else if (type === 'airtime_self') {
+        let amt = prompt("Airtime amount (₦)", "500");
+        if (amt && !isNaN(parseFloat(amt))) deductFromWallet(parseFloat(amt), "Airtime top-up");
+      }
+    });
+  });
+
+  // ---------- Wallet actions ----------
+  document.getElementById('fundWalletBtn').addEventListener('click', () => {
+    let amt = prompt("Enter amount to fund (₦)", "1000");
+    if (amt && !isNaN(parseFloat(amt)) && parseFloat(amt) > 0) {
+      fundWalletDemo(parseFloat(amt));
+    } else if (amt) showToast("Invalid amount", true);
+  });
+
+  document.getElementById('withdrawBtn').addEventListener('click', () => {
+    let amt = prompt("Withdrawal amount (₦)", "2000");
+    if (amt && !isNaN(parseFloat(amt)) && parseFloat(amt) > 0) {
+      if (parseFloat(amt) > walletBalance) {
+        showToast("Insufficient balance", true);
+        return;
+      }
+      let bank = prompt("Bank name (e.g., GTBank)", "GTBank");
+      if (bank) {
+        walletBalance -= parseFloat(amt);
+        updateBalanceUI();
+        addRecentTransaction(`Withdrawal to ${bank}`, parseFloat(amt), false);
+        showToast(`💰 ₦${parseFloat(amt).toLocaleString()} withdrawn to ${bank}`);
+      }
+    } else if (amt) showToast("Invalid amount", true);
+  });
+
+  // ---------- Profile icon ----------
+  document.getElementById('profileIcon').addEventListener('click', () => {
+    showToast("Profile page coming soon", false);
+  });
+
+  // ---------- Bottom navigation ----------
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const dest = item.getAttribute('data-nav');
+      if (dest === 'home') {
+        // already on home
+        showToast("You're on Home page", false);
+      } else if (dest === 'data') {
+        window.location.href = "tdata_dataplans.html";
+      } else if (dest === 'history') {
+        // showToast("Transaction history page coming soon", false);
+        window.location.href = "tdata_history.html"
+      } else if (dest === 'profile') {
+        // showToast("Profile page coming soon", false);
+        window.location.href = "tdata_profile.html"
+      }
+    });
+  });
+</script>
+</body>
+</html>
