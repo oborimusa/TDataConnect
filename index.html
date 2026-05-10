@@ -6,8 +6,10 @@
   <title>T Data Connect · Login or Sign Up</title>
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Fonts: Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Google Fonts: Poppins + Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <style>
     * {
       margin: 0;
@@ -17,100 +19,188 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: #f4f7fc;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    /* App container same as homepage */
+    /* Animated background bubbles */
+    .bubble {
+      position: absolute;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 20s infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-100px) rotate(180deg); }
+    }
+
+    /* App container */
     .auth-container {
       max-width: 480px;
       width: 100%;
       margin: 0 auto;
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       border-radius: 40px;
-      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
       overflow: hidden;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+
+    .auth-container:hover {
+      transform: translateY(-5px);
     }
 
     /* top branding */
     .brand-header {
-      background: linear-gradient(135deg, #0b2b3b 0%, #144d5e 100%);
-      padding: 32px 24px 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 32px 35px;
       text-align: center;
       color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+      background-size: 50px 50px;
+      animation: shimmer 20s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+      100% { transform: translateX(-50%) translateY(-50%) rotate(360deg); }
     }
 
     .brand-header h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      position: relative;
     }
 
     .brand-header p {
-      font-size: 0.85rem;
-      opacity: 0.85;
-      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.95;
+      position: relative;
     }
 
     .brand-icon {
       background: rgba(255,255,255,0.2);
-      width: 70px;
-      height: 70px;
+      width: 80px;
+      height: 80px;
       border-radius: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
-      font-size: 2.2rem;
+      margin: 0 auto 20px;
+      font-size: 2.5rem;
       backdrop-filter: blur(4px);
+      transition: transform 0.3s ease;
+    }
+
+    .brand-icon:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Stats badges */
+    .stats-badges {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      gap: 15px;
+    }
+
+    .stat-badge {
+      background: rgba(255,255,255,0.15);
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      text-align: center;
+      flex: 1;
+    }
+
+    .stat-badge i {
+      margin-right: 5px;
+      font-size: 0.9rem;
+    }
+
+    .stat-number {
+      font-weight: 700;
+      font-size: 1rem;
+      display: block;
     }
 
     /* form panel */
     .form-panel {
-      padding: 28px 24px 36px;
+      padding: 32px 28px 40px;
     }
 
     .tab-buttons {
       display: flex;
       gap: 20px;
-      margin-bottom: 28px;
-      border-bottom: 2px solid #eef2f8;
+      margin-bottom: 32px;
+      background: #f0f2f5;
+      padding: 5px;
+      border-radius: 60px;
     }
 
     .tab-btn {
-      background: none;
+      background: transparent;
       border: none;
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-weight: 600;
-      padding: 8px 0 12px;
+      padding: 10px 0;
       cursor: pointer;
       color: #8ea3b2;
-      transition: 0.2s;
+      transition: 0.3s;
       flex: 1;
       text-align: center;
+      border-radius: 60px;
     }
 
     .tab-btn.active {
-      color: #0f6b7c;
-      border-bottom: 3px solid #0f6b7c;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .auth-form {
       display: none;
-      animation: fade 0.2s ease;
+      animation: fadeInUp 0.5s ease;
     }
 
     .auth-form.active-form {
       display: block;
     }
 
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(8px);}
-      to { opacity: 1; transform: translateY(0);}
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .input-group {
@@ -119,10 +209,10 @@
 
     .input-group label {
       display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 600;
       margin-bottom: 8px;
-      color: #2c4b5c;
+      color: #2c3e50;
     }
 
     .input-icon {
@@ -134,25 +224,30 @@
       left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: #98b1c2;
-      font-size: 1rem;
+      color: #667eea;
+      font-size: 1.1rem;
+      transition: 0.3s;
     }
 
     .input-icon input {
       width: 100%;
-      padding: 14px 16px 14px 44px;
-      border: 1.5px solid #e2e9f0;
-      border-radius: 60px;
+      padding: 14px 16px 14px 48px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
       font-size: 1rem;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Inter', sans-serif;
       background: white;
-      transition: 0.2s;
+      transition: 0.3s;
     }
 
     .input-icon input:focus {
       outline: none;
-      border-color: #0f6b7c;
-      box-shadow: 0 0 0 3px rgba(15,107,124,0.1);
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-icon input:focus + i {
+      color: #764ba2;
     }
 
     .forgot-link {
@@ -161,17 +256,23 @@
     }
 
     .forgot-link a {
-      font-size: 0.75rem;
-      color: #0f6b7c;
+      font-size: 0.8rem;
+      color: #667eea;
       text-decoration: none;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    .forgot-link a:hover {
+      color: #764ba2;
     }
 
     .btn-primary {
-      background: #0f6b7c;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       width: 100%;
       border: none;
       padding: 14px;
-      border-radius: 60px;
+      border-radius: 12px;
       font-weight: 700;
       font-size: 1rem;
       color: white;
@@ -180,35 +281,58 @@
       justify-content: center;
       gap: 10px;
       cursor: pointer;
-      transition: 0.2s;
-      margin-top: 6px;
+      transition: 0.3s;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-primary:hover::before {
+      width: 300px;
+      height: 300px;
     }
 
     .btn-primary:active {
-      transform: scale(0.97);
-      background: #0c5a68;
+      transform: scale(0.98);
     }
 
     .demo-credentials {
-      margin-top: 28px;
-      background: #f8fafd;
-      padding: 14px 16px;
-      border-radius: 24px;
+      margin-top: 24px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 16px;
+      border-radius: 16px;
       text-align: center;
-      font-size: 0.7rem;
-      color: #5f7f90;
-      border: 1px solid #eef2f8;
+      font-size: 0.75rem;
+      color: #2c3e50;
+      border: 1px solid rgba(102, 126, 234, 0.2);
     }
 
     .demo-credentials span {
-      font-weight: 600;
-      color: #0f6b7c;
+      font-weight: 700;
+      color: #667eea;
+      background: white;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin: 0 2px;
     }
 
     hr {
-      margin: 20px 0;
+      margin: 24px 0;
       border: none;
-      border-top: 1px solid #eef2f8;
+      border-top: 1px solid #e1e5e9;
     }
 
     .terms {
@@ -219,11 +343,12 @@
     }
 
     .terms a {
-      color: #0f6b7c;
+      color: #667eea;
       text-decoration: none;
+      font-weight: 500;
     }
 
-    /* Custom toast notification for better UX */
+    /* Custom toast */
     .custom-toast {
       position: fixed;
       bottom: 30px;
@@ -231,62 +356,125 @@
       transform: translateX(-50%);
       background: #1e2f3a;
       color: white;
-      padding: 12px 24px;
+      padding: 14px 28px;
       border-radius: 60px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       z-index: 2000;
       display: none;
-      white-space: nowrap;
-      max-width: 90%;
-      white-space: normal;
       text-align: center;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* Loading spinner */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .form-panel {
+        padding: 24px 20px;
+      }
+      
+      .stat-number {
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-<div class="auth-container">
+<!-- Animated bubbles -->
+<div id="bubbles"></div>
+
+<div class="auth-container animate__animated animate__fadeInUp">
   <div class="brand-header">
     <div class="brand-icon">
       <i class="fas fa-bolt"></i>
     </div>
     <h1>T Data Connect</h1>
     <p>Data · Airtime · Bills — all in one place</p>
+    
+    <div class="stats-badges">
+      <div class="stat-badge">
+        <i class="fas fa-users"></i>
+        <span class="stat-number">10,000+</span>
+        <span>Active Users</span>
+      </div>
+      <div class="stat-badge">
+        <i class="fas fa-tachometer-alt"></i>
+        <span class="stat-number">99.9%</span>
+        <span>Uptime</span>
+      </div>
+      <div class="stat-badge">
+        <i class="fas fa-star"></i>
+        <span class="stat-number">4.8</span>
+        <span>Rating</span>
+      </div>
+    </div>
   </div>
         
   <div class="form-panel">
     <!-- Tabs -->
     <div class="tab-buttons">
-      <button class="tab-btn active" id="loginTabBtn">Log in</button>
-      <button class="tab-btn" id="signupTabBtn">Sign up</button>
+      <button class="tab-btn active" id="loginTabBtn">
+        <i class="fas fa-sign-in-alt"></i> Log in
+      </button>
+      <button class="tab-btn" id="signupTabBtn">
+        <i class="fas fa-user-plus"></i> Sign up
+      </button>
     </div>
 
     <!-- LOGIN FORM -->
     <div id="loginForm" class="auth-form active-form">
       <form id="loginFormElement">
         <div class="input-group">
-          <label>Phone number or Email</label>
+          <label>📱 Phone number or Email</label>
           <div class="input-icon">
             <i class="fas fa-phone-alt"></i>
             <input type="text" id="loginIdentifier" placeholder="08012345678 or email@example.com" autocomplete="username">
           </div>
         </div>
         <div class="input-group">
-          <label>Password / PIN</label>
+          <label>🔒 Password / PIN</label>
           <div class="input-icon">
             <i class="fas fa-lock"></i>
             <input type="password" id="loginPassword" placeholder="Enter 4–6 digit PIN or password" autocomplete="current-password">
           </div>
         </div>
         <div class="forgot-link">
-          <a href="#" id="forgotPasswordLink">Forgot PIN?</a>
+          <a href="#" id="forgotPasswordLink"><i class="fas fa-question-circle"></i> Forgot PIN?</a>
         </div>
-        <button type="submit" class="btn-primary"><i class="fas fa-arrow-right-to-bracket"></i> Log in</button>
+        <button type="submit" class="btn-primary" id="loginBtn">
+          <i class="fas fa-arrow-right-to-bracket"></i> Log in
+        </button>
       </form>
       <div class="demo-credentials">
-        <i class="fas fa-flask"></i> Demo login: <span>08012345678</span> / PIN <span>1234</span><br>
-        (Click login to continue to dashboard)
+        <i class="fas fa-flask"></i> <strong>Demo Login:</strong><br>
+        📞 <span>08012345678</span> / PIN <span>1234</span><br>
+        📧 <span>demo@tdata.com</span> / PIN <span>1234</span>
       </div>
     </div>
 
@@ -294,64 +482,104 @@
     <div id="signupForm" class="auth-form">
       <form id="signupFormElement">
         <div class="input-group">
-          <label>Full name</label>
+          <label>👤 Full name</label>
           <div class="input-icon">
             <i class="fas fa-user"></i>
             <input type="text" id="signupName" placeholder="Oluwaseun Adebayo" required>
           </div>
         </div>
         <div class="input-group">
-          <label>Phone number</label>
+          <label>📞 Phone number</label>
           <div class="input-icon">
             <i class="fas fa-mobile-alt"></i>
             <input type="tel" id="signupPhone" placeholder="08012345678" required>
           </div>
         </div>
         <div class="input-group">
-          <label>Email (optional)</label>
+          <label>📧 Email (optional)</label>
           <div class="input-icon">
             <i class="fas fa-envelope"></i>
             <input type="email" id="signupEmail" placeholder="you@example.com">
           </div>
         </div>
         <div class="input-group">
-          <label>Create 4‑digit transaction PIN</label>
+          <label>🔐 Create 4‑digit transaction PIN</label>
           <div class="input-icon">
             <i class="fas fa-key"></i>
             <input type="password" id="signupPin" maxlength="6" placeholder="1234" required>
           </div>
         </div>
-        <button type="submit" class="btn-primary"><i class="fas fa-user-plus"></i> Create account</button>
+        <div class="input-group">
+          <label>✅ Confirm PIN</label>
+          <div class="input-icon">
+            <i class="fas fa-check-circle"></i>
+            <input type="password" id="confirmPin" maxlength="6" placeholder="Confirm your PIN" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary" id="signupBtn">
+          <i class="fas fa-user-plus"></i> Create account
+        </button>
       </form>
       <div class="demo-credentials">
-        <i class="fas fa-info-circle"></i> Sign up is free. You'll get ₦500 welcome bonus!
+        <i class="fas fa-gift"></i> <strong>Welcome Bonus:</strong> Get ₦500 when you sign up! 🎉
       </div>
     </div>
 
     <hr>
     <div class="terms">
-      By continuing you agree to our <a href="#">Terms</a> & <a href="#">Privacy</a>.
+      <i class="fas fa-shield-alt"></i> By continuing you agree to our 
+      <a href="#">Terms</a> & <a href="#">Privacy</a>
     </div>
   </div>
 </div>
 
-<!-- Custom toast element -->
 <div id="customToast" class="custom-toast"></div>
 
 <script>
-  // ==================== DEMO MODE SCRIPT ====================
+  // ==================== ENHANCED SCRIPT ====================
   
-  function showToast(message, isError = false) {
+  // Create animated bubbles
+  function createBubbles() {
+    const bubblesContainer = document.getElementById('bubbles');
+    for (let i = 0; i < 20; i++) {
+      const bubble = document.createElement('div');
+      bubble.classList.add('bubble');
+      const size = Math.random() * 100 + 50;
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * 100}%`;
+      bubble.style.top = `${Math.random() * 100}%`;
+      bubble.style.animationDelay = `${Math.random() * 20}s`;
+      bubble.style.animationDuration = `${Math.random() * 10 + 15}s`;
+      bubblesContainer.appendChild(bubble);
+    }
+  }
+  createBubbles();
+
+  function showToast(message, isError = false, duration = 3000) {
     const toast = document.getElementById('customToast');
     toast.innerText = message;
-    toast.style.background = isError ? '#c0392b' : '#1e2f3a';
+    toast.style.background = isError ? 
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' : 
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
     toast.style.display = 'block';
     setTimeout(() => {
       toast.style.display = 'none';
-    }, 2500);
+    }, duration);
   }
 
-  // Tab switching
+  function setButtonLoading(button, isLoading, originalText = null) {
+    if (isLoading) {
+      button.dataset.originalHtml = button.innerHTML;
+      button.innerHTML = '<span class="loading-spinner"></span> Processing...';
+      button.disabled = true;
+    } else {
+      button.innerHTML = button.dataset.originalHtml || originalText || button.innerHTML;
+      button.disabled = false;
+    }
+  }
+
+  // Tab switching with animation
   const loginTab = document.getElementById('loginTabBtn');
   const signupTab = document.getElementById('signupTabBtn');
   const loginFormDiv = document.getElementById('loginForm');
@@ -374,72 +602,131 @@
   loginTab.addEventListener('click', () => setActiveTab('login'));
   signupTab.addEventListener('click', () => setActiveTab('signup'));
 
-  // Forgot PIN
+  // Forgot PIN with better UX
   document.getElementById('forgotPasswordLink')?.addEventListener('click', (e) => {
     e.preventDefault();
-    showToast("🔐 Demo: Reset link would be sent to your phone");
+    const identifier = document.getElementById('loginIdentifier').value.trim();
+    if (identifier) {
+      showToast(`📱 Reset link sent to ${identifier}. Check your SMS/email!`);
+    } else {
+      showToast("🔐 Please enter your phone number or email to reset PIN");
+    }
   });
 
-  // DEMO LOGIN (simulated)
-  document.getElementById('loginFormElement').addEventListener('submit', (e) => {
+  // ENHANCED DEMO LOGIN
+  document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
     e.preventDefault();
     const identifier = document.getElementById('loginIdentifier').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
+    const loginBtn = document.getElementById('loginBtn');
 
     if (!identifier || !password) {
       showToast("❌ Please enter phone/email and PIN", true);
       return;
     }
 
-    // Demo credentials
+    setButtonLoading(loginBtn, true);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     const isValid = (identifier === "08012345678" && password === "1234") ||
-                    (identifier === "demo@tdata.com" && password === "1234");
+                    (identifier === "demo@tdata.com" && password === "1234") ||
+                    (identifier === "user@example.com" && password === "1234");
     
     if (isValid) {
-      showToast("✅ Login successful! Redirecting to dashboard...");
+      showToast("✅ Login successful! Welcome back! 🎉");
       sessionStorage.setItem('isLoggedIn', 'true');
       sessionStorage.setItem('userPhone', identifier);
+      sessionStorage.setItem('userName', identifier.includes('@') ? 'Demo User' : identifier);
+      
       setTimeout(() => {
         window.location.href = "tdata_homepage.html";
       }, 1200);
     } else {
-      showToast("⚠️ Invalid credentials. Use 08012345678 / PIN: 1234", true);
+      showToast("⚠️ Invalid credentials. Use 08012345678 / PIN: 1234 for demo", true);
+      setButtonLoading(loginBtn, false);
     }
   });
 
-  // DEMO SIGNUP (simulated)
-  document.getElementById('signupFormElement').addEventListener('submit', (e) => {
+  // ENHANCED DEMO SIGNUP with PIN confirmation
+  document.getElementById('signupFormElement').addEventListener('submit', async (e) => {
     e.preventDefault();
     const fullName = document.getElementById('signupName').value.trim();
     const phone = document.getElementById('signupPhone').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
     const pin = document.getElementById('signupPin').value.trim();
+    const confirmPin = document.getElementById('confirmPin').value.trim();
+    const signupBtn = document.getElementById('signupBtn');
 
-    if (!fullName || !phone || !pin) {
+    if (!fullName || !phone || !pin || !confirmPin) {
       showToast("❌ Please fill all required fields", true);
       return;
     }
     
-    if (pin.length < 4 || isNaN(pin)) {
-      showToast("❌ PIN must be at least 4 digits", true);
+    if (pin.length < 4 || !/^\d+$/.test(pin)) {
+      showToast("❌ PIN must be at least 4 digits (numbers only)", true);
+      return;
+    }
+    
+    if (pin !== confirmPin) {
+      showToast("❌ PIN and Confirm PIN do not match", true);
+      return;
+    }
+    
+    if (phone.length < 10 || !/^[0-9]+$/.test(phone)) {
+      showToast("❌ Enter a valid phone number (e.g., 08012345678)", true);
       return;
     }
 
-    showToast(`🎉 Welcome ${fullName}! Account created. You can now log in.`);
+    setButtonLoading(signupBtn, true);
+    
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    showToast(`🎉 Welcome ${fullName.split(' ')[0]}! Account created successfully! You get ₦500 bonus!`);
     sessionStorage.setItem('newUserPhone', phone);
+    sessionStorage.setItem('newUserName', fullName);
     
     setTimeout(() => {
       setActiveTab('login');
       document.getElementById('loginIdentifier').value = phone;
-      showToast("Account created! Please log in with your phone number and PIN");
+      document.getElementById('loginPassword').value = '';
+      showToast("✅ Account created! Please log in with your phone number and PIN");
+      setButtonLoading(signupBtn, false);
     }, 1500);
   });
 
-  // Check existing session
+  // Check existing session with animation
   if (sessionStorage.getItem('isLoggedIn') === 'true') {
-    window.location.href = "tdata_homepage.html";
+    showToast("🔄 You are already logged in. Redirecting...");
+    setTimeout(() => {
+      window.location.href = "tdata_homepage.html";
+    }, 1000);
   }
 
-  console.log("T Data Connect - Demo Mode Active");
+  // Password visibility toggle (optional enhancement)
+  const addPasswordToggle = () => {
+    const passwordInputs = document.querySelectorAll('input[type="password"]');
+    passwordInputs.forEach(input => {
+      const wrapper = input.closest('.input-icon');
+      if (wrapper && !wrapper.querySelector('.toggle-password')) {
+        const toggle = document.createElement('i');
+        toggle.className = 'fas fa-eye toggle-password';
+        toggle.style.cssText = 'position: absolute; right: 16px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #98b1c2; z-index: 2;';
+        toggle.addEventListener('click', () => {
+          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+          input.setAttribute('type', type);
+          toggle.className = type === 'password' ? 'fas fa-eye toggle-password' : 'fas fa-eye-slash toggle-password';
+        });
+        wrapper.appendChild(toggle);
+        input.style.paddingRight = '45px';
+      }
+    });
+  };
+  addPasswordToggle();
+
+  console.log("🚀 T Data Connect - Enhanced Version Active");
 </script>
 </body>
 </html>
