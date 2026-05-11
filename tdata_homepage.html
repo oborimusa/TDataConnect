@@ -264,292 +264,636 @@
 
     <div id="customToast" class="custom-toast"></div>
 
-    <script>
-        // Data storage
-        let transactions = [
-            {id:1, date:'2024-05-09 14:30', type:'Data', details:'MTN 1GB', amount:'₦300', status:'success'},
-            {id:2, date:'2024-05-08 10:15', type:'Airtime', details:'MTN ₦500', amount:'₦500', status:'success'},
-            {id:3, date:'2024-05-07 09:45', type:'Data', details:'GLO 2GB', amount:'₦550', status:'success'}
-        ];
-        
-        let userProfile = {
-            fullName: 'John Doe', phone: '08012345678', email: 'john@example.com',
-            joinDate: '2024-05-06', walletBalance: 5000
+<!-- Add this script section to your tdata_homepage.html -->
+<script>
+// ==================== DATA STORAGE ====================
+
+// Load or initialize user data
+function loadFromLocalStorage() {
+    const savedProfile = localStorage.getItem('tdata_userProfile');
+    const savedTransactions = localStorage.getItem('tdata_transactions');
+    
+    if (savedProfile) {
+        userProfile = JSON.parse(savedProfile);
+    } else {
+        userProfile = {
+            fullName: 'John Doe',
+            phone: '08012345678',
+            email: 'john@example.com',
+            joinDate: '2024-05-06',
+            walletBalance: 5000
         };
-
-        const dataPlans = [
-            {network:'MTN', plans:[{size:'500MB',price:150},{size:'1GB',price:300},{size:'2GB',price:550},{size:'5GB',price:1200},{size:'10GB',price:2200}]},
-            {network:'GLO', plans:[{size:'500MB',price:140},{size:'1GB',price:280},{size:'2GB',price:520},{size:'5GB',price:1100},{size:'10GB',price:2000}]},
-            {network:'Airtel', plans:[{size:'500MB',price:145},{size:'1GB',price:290},{size:'2GB',price:540},{size:'5GB',price:1150},{size:'10GB',price:2100}]},
-            {network:'9mobile', plans:[{size:'500MB',price:150},{size:'1GB',price:300},{size:'2GB',price:550},{size:'5GB',price:1200},{size:'10GB',price:2200}]}
+    }
+    
+    if (savedTransactions) {
+        transactions = JSON.parse(savedTransactions);
+    } else {
+        transactions = [
+            {id: 1, date: '2024-05-09 14:30', type: 'Data Purchase', details: 'MTN 1GB to 08012345678', amount: '₦300', status: 'success'},
+            {id: 2, date: '2024-05-08 10:15', type: 'Airtime Purchase', details: 'MTN ₦500 to 08012345678', amount: '₦500', status: 'success'},
+            {id: 3, date: '2024-05-07 09:45', type: 'Data Purchase', details: 'GLO 2GB to 08012345678', amount: '₦550', status: 'success'}
         ];
+    }
+}
 
-        const airtimePlans = [
-            {network:'MTN', amounts:[100,200,500,1000,2000,5000]},
-            {network:'GLO', amounts:[100,200,500,1000,2000,5000]},
-            {network:'Airtel', amounts:[100,200,500,1000,2000,5000]},
-            {network:'9mobile', amounts:[100,200,500,1000,2000,5000]}
-        ];
+function saveToLocalStorage() {
+    localStorage.setItem('tdata_userProfile', JSON.stringify(userProfile));
+    localStorage.setItem('tdata_transactions', JSON.stringify(transactions));
+}
 
-        const cableTV = [
-            {name:'DSTV', plans:[{name:'Compact',price:7500},{name:'Compact Plus',price:12500},{name:'Premium',price:18500}]},
-            {name:'GOTV', plans:[{name:'Max',price:5700},{name:'Supa Plus',price:8200}]},
-            {name:'STARTIMES', plans:[{name:'Basic',price:2500},{name:'Classic',price:4200},{name:'Premium',price:6500}]}
-        ];
+// ==================== TOAST NOTIFICATION ====================
 
-        const electricityBills = [
-            {disco:'IKEDC (Ikeja Electric)', minAmount:1000},
-            {disco:'EEDC (Enugu Electric)', minAmount:1000},
-            {disco:'KEDCO (Kano Electric)', minAmount:1000},
-            {disco:'PHED (Port Harcourt Electric)', minAmount:1000}
-        ];
+function showToast(message, isError = false) {
+    const toast = document.getElementById('customToast');
+    toast.innerText = message;
+    toast.style.background = isError ? 'linear-gradient(135deg, #f093fb, #f5576c)' : 'linear-gradient(135deg, #667eea, #764ba2)';
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 3000);
+}
 
-        function showToast(msg, isError=false) {
-            const toast = document.getElementById('customToast');
-            toast.innerText = msg;
-            toast.style.background = isError ? 'linear-gradient(135deg, #f093fb, #f5576c)' : 'linear-gradient(135deg, #667eea, #764ba2)';
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 3000);
+// ==================== DASHBOARD FUNCTIONS ====================
+
+function loadDashboard() {
+    // Update wallet balance
+    const walletElement = document.getElementById('walletBalance');
+    if (walletElement) {
+        walletElement.innerHTML = `₦${userProfile.walletBalance.toLocaleString()}`;
+    }
+    
+    // Update transaction count
+    const transactionCountElement = document.getElementById('transactionCount');
+    if (transactionCountElement) {
+        transactionCountElement.innerText = transactions.length;
+    }
+    
+    // Calculate total spent (FIXED: handle both string and number)
+    const totalSpent = transactions.reduce((sum, t) => {
+        let amount = t.amount;
+        if (typeof amount === 'string') {
+            amount = amount.replace('₦', '').replace(',', '');
         }
-
-        function loadDashboard() {
-            document.getElementById('walletBalance').innerHTML = `₦${userProfile.walletBalance.toLocaleString()}`;
-            document.getElementById('transactionCount').innerText = transactions.length;
-            const totalSpent = transactions.reduce((sum, t) => sum + parseInt(t.amount.replace('₦','')), 0);
-            document.getElementById('totalSpent').innerHTML = `₦${totalSpent.toLocaleString()}`;
-            const daysMember = Math.floor((new Date() - new Date(userProfile.joinDate)) / (1000*60*60*24));
-            document.getElementById('memberDays').innerText = daysMember > 0 ? daysMember : 1;
-            
-            const ctx = document.getElementById('spendingChart').getContext('2d');
-            const dailySpending = [1200, 850, 2000, 1500, 3000, 2500, 1800];
-            new Chart(ctx, {
-                type: 'line',
-                data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ label: 'Daily Spending (₦)', data: dailySpending, borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', tension: 0.4, fill: true }] },
-                options: { responsive: true, plugins: { legend: { position: 'top' } } }
-            });
-        }
-
-        function loadDataPlans() {
-            const container = document.getElementById('dataPlans');
-            container.innerHTML = dataPlans.map(network => `
-                <div class="service-card" style="text-align:left; padding:20px;">
-                    <i class="fas fa-signal"></i><h4>${network.network}</h4>
-                    ${network.plans.map(plan => `<div onclick="purchaseData('${network.network}','${plan.size}',${plan.price})" style="padding:10px; margin:5px 0; background:#f8fafd; border-radius:10px; cursor:pointer;"><strong>${plan.size}</strong> - ₦${plan.price}</div>`).join('')}
-                </div>
-            `).join('');
-        }
-
-        function purchaseData(network, size, amount) {
-            if(userProfile.walletBalance < amount) { showToast('❌ Insufficient balance! Please fund wallet', true); return; }
-            const phone = prompt('Enter phone number:', userProfile.phone);
-            if(!phone || phone.length < 10) { showToast('❌ Valid phone number required', true); return; }
-            
-            userProfile.walletBalance -= amount;
-            transactions.unshift({id:transactions.length+1, date:new Date().toLocaleString(), type:'Data Purchase', details:`${network} ${size} to ${phone}`, amount:`₦${amount}`, status:'success'});
-            loadDashboard();
-            loadTransactionHistory();
-            saveToLocalStorage();
-            showToast(`✅ Success! ${network} ${size} sent to ${phone}`);
-        }
-
-        function loadAirtimeOptions() {
-            const container = document.getElementById('airtimeOptions');
-            container.innerHTML = airtimePlans.map(network => `
-                <div class="service-card" style="text-align:left; padding:20px;">
-                    <i class="fas fa-sim-card"></i><h4>${network.network}</h4>
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-                        ${network.amounts.map(amount => `<div onclick="purchaseAirtime('${network.network}',${amount})" style="padding:10px; background:#f8fafd; border-radius:10px; cursor:pointer; text-align:center;"><strong>₦${amount}</strong></div>`).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function purchaseAirtime(network, amount) {
-            if(userProfile.walletBalance < amount) { showToast('❌ Insufficient balance!', true); return; }
-            const phone = prompt('Enter phone number:', userProfile.phone);
-            if(!phone || phone.length < 10) { showToast('❌ Valid phone number required', true); return; }
-            
-            userProfile.walletBalance -= amount;
-            transactions.unshift({id:transactions.length+1, date:new Date().toLocaleString(), type:'Airtime Purchase', details:`${network} ₦${amount} to ${phone}`, amount:`₦${amount}`, status:'success'});
-            loadDashboard();
-            loadTransactionHistory();
-            saveToLocalStorage();
-            showToast(`✅ ${network} airtime of ₦${amount} sent to ${phone}`);
-        }
-
-        function loadCableTV() {
-            const container = document.getElementById('cableTVOptions');
-            container.innerHTML = cableTV.map(provider => `
-                <div class="service-card" style="text-align:left; padding:20px;">
-                    <i class="fas fa-tv"></i><h4>${provider.name}</h4>
-                    ${provider.plans.map(plan => `<div onclick="payCableBill('${provider.name}','${plan.name}',${plan.price})" style="padding:10px; margin:5px 0; background:#f8fafd; border-radius:10px; cursor:pointer;"><strong>${plan.name}</strong> - ₦${plan.price}</div>`).join('')}
-                </div>
-            `).join('');
-        }
-
-        function payCableBill(provider, plan, amount) {
-            if(userProfile.walletBalance < amount) { showToast('❌ Insufficient balance!', true); return; }
-            const smartCard = prompt('Enter smart card number:', '');
-            if(!smartCard || smartCard.length < 5) { showToast('❌ Valid smart card number required', true); return; }
-            
-            userProfile.walletBalance -= amount;
-            transactions.unshift({id:transactions.length+1, date:new Date().toLocaleString(), type:'Cable TV', details:`${provider} ${plan} - SmartCard: ${smartCard}`, amount:`₦${amount}`, status:'success'});
-            loadDashboard();
-            loadTransactionHistory();
-            saveToLocalStorage();
-            showToast(`✅ ${provider} ${plan} subscription successful!`);
-        }
-
-        function loadElectricity() {
-            const container = document.getElementById('electricityOptions');
-            container.innerHTML = electricityBills.map(disco => `
-                <div class="bill-option" onclick="payElectricityBill('${disco.disco}')">
-                    <i class="fas fa-bolt"></i> <strong>${disco.disco}</strong> - Min ₦${disco.minAmount}
-                </div>
-            `).join('');
-        }
-
-        function payElectricityBill(disco) {
-            const amount = prompt('Enter amount (minimum ₦1000):', '1000');
-            if(!amount || amount < 1000) { showToast('❌ Minimum amount is ₦1000', true); return; }
-            if(userProfile.walletBalance < parseInt(amount)) { showToast('❌ Insufficient balance!', true); return; }
-            
-            const meterNo = prompt('Enter meter number:', '');
-            if(!meterNo || meterNo.length < 5) { showToast('❌ Valid meter number required', true); return; }
-            
-            userProfile.walletBalance -= parseInt(amount);
-            transactions.unshift({id:transactions.length+1, date:new Date().toLocaleString(), type:'Electricity Bill', details:`${disco} - Meter: ${meterNo}`, amount:`₦${amount}`, status:'success'});
-            loadDashboard();
-            loadTransactionHistory();
-            saveToLocalStorage();
-            showToast(`✅ Electricity bill of ₦${amount} paid for ${disco}`);
-        }
-
-        function loadOtherBills() {
-            const container = document.getElementById('otherBills');
-            container.innerHTML = `
-                <div class="bill-option" onclick="showComingSoon()"><i class="fas fa-water"></i> Water Bill - Coming Soon</div>
-                <div class="bill-option" onclick="showComingSoon()"><i class="fas fa-wifi"></i> Internet Bill - Coming Soon</div>
-                <div class="bill-option" onclick="showComingSoon()"><i class="fas fa-school"></i> School Fees - Coming Soon</div>
-            `;
-        }
-
-        function showComingSoon() { showToast('🚀 This service is coming soon!'); }
-
-        function loadTransactionHistory() {
-            document.getElementById('historyBody').innerHTML = transactions.map(t => `
-                <tr><td>${t.date}</td><td>${t.type}</td><td>${t.details}</td><td>${t.amount}</td><td class="status-${t.status}">${t.status.toUpperCase()}</td></tr>
-            `).join('');
-        }
-
-        function loadProfile() {
-            document.getElementById('profileName').innerText = userProfile.fullName;
-            document.getElementById('profilePhone').innerText = userProfile.phone;
-            document.getElementById('profileEmail').innerText = userProfile.email;
-            document.getElementById('profileJoinDate').innerText = new Date(userProfile.joinDate).toDateString();
-            document.getElementById('walletAmount').innerHTML = `₦${userProfile.walletBalance.toLocaleString()}`;
-            document.getElementById('userNameDisplay').innerText = userProfile.fullName.split(' ')[0];
-        }
-
-        function editProfile() {
-            let newName = prompt('Enter full name:', userProfile.fullName);
-            if(newName && newName.trim()) userProfile.fullName = newName.trim();
-            let newEmail = prompt('Enter email:', userProfile.email);
-            if(newEmail && newEmail.trim()) userProfile.email = newEmail.trim();
-            loadProfile();
-            saveToLocalStorage();
-            showToast('Profile updated!');
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('tdata_userProfile', JSON.stringify(userProfile));
-            localStorage.setItem('tdata_transactions', JSON.stringify(transactions));
-        }
-
-        function loadFromLocalStorage() {
-            const savedProfile = localStorage.getItem('tdata_userProfile');
-            const savedTransactions = localStorage.getItem('tdata_transactions');
-            if(savedProfile) userProfile = JSON.parse(savedProfile);
-            if(savedTransactions) transactions = JSON.parse(savedTransactions);
-        }
-
-        // Navigation
-        const panels = { dashboard:'dashboardPanel', data:'dataPanel', airtime:'airtimePanel', bills:'billsPanel', cabletv:'cabletvPanel', electricity:'electricityPanel', history:'historyPanel', wallet:'walletPanel', profile:'profilePanel' };
+        return sum + (parseInt(amount) || 0);
+    }, 0);
+    
+    const totalSpentElement = document.getElementById('totalSpent');
+    if (totalSpentElement) {
+        totalSpentElement.innerHTML = `₦${totalSpent.toLocaleString()}`;
+    }
+    
+    // Calculate member days
+    const daysMember = Math.floor((new Date() - new Date(userProfile.joinDate)) / (1000 * 60 * 60 * 24));
+    const memberDaysElement = document.getElementById('memberDays');
+    if (memberDaysElement) {
+        memberDaysElement.innerText = daysMember > 0 ? daysMember : 1;
+    }
+    
+    // Initialize chart
+    const ctx = document.getElementById('spendingChart');
+    if (ctx) {
+        const chartCtx = ctx.getContext('2d');
+        const dailySpending = [1200, 850, 2000, 1500, 3000, 2500, 1800];
         
-        function showPage(page) {
-            Object.values(panels).forEach(p => document.getElementById(p).classList.remove('active'));
-            document.getElementById(panels[page]).classList.add('active');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            const activeLink = document.querySelector(`[data-page="${page}"]`);
-            if(activeLink) activeLink.classList.add('active');
-            document.getElementById('pageTitle').innerText = page.charAt(0).toUpperCase() + page.slice(1).replace('cabletv', 'Cable TV').replace('electricity', 'Electricity');
-            
-            if(page === 'history') loadTransactionHistory();
-            if(page === 'dashboard') loadDashboard();
-            if(page === 'profile') loadProfile();
-            if(page === 'data') loadDataPlans();
-            if(page === 'airtime') loadAirtimeOptions();
-            if(page === 'cabletv') loadCableTV();
-            if(page === 'electricity') loadElectricity();
-            if(page === 'bills') loadOtherBills();
+        if (window.spendingChart) {
+            window.spendingChart.destroy();
         }
-
-        document.querySelectorAll('.nav-link[data-page]').forEach(link => {
-            link.addEventListener('click', (e) => { e.preventDefault(); showPage(link.getAttribute('data-page')); });
+        
+        window.spendingChart = new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Spending (₦)',
+                    data: dailySpending,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
         });
+    }
+}
 
-        document.getElementById('logoutBtn')?.addEventListener('click', () => {
-            sessionStorage.clear();
-            localStorage.removeItem('tdata_userProfile');
-            localStorage.removeItem('tdata_transactions');
-            showToast('Logging out...');
-            setTimeout(() => window.location.href = 'index.html', 1000);
+// ==================== DATA PLANS ====================
+
+const dataPlans = [
+    {network: 'MTN', plans: [{size: '500MB', price: 150}, {size: '1GB', price: 300}, {size: '2GB', price: 550}, {size: '5GB', price: 1200}, {size: '10GB', price: 2200}]},
+    {network: 'GLO', plans: [{size: '500MB', price: 140}, {size: '1GB', price: 280}, {size: '2GB', price: 520}, {size: '5GB', price: 1100}, {size: '10GB', price: 2000}]},
+    {network: 'Airtel', plans: [{size: '500MB', price: 145}, {size: '1GB', price: 290}, {size: '2GB', price: 540}, {size: '5GB', price: 1150}, {size: '10GB', price: 2100}]},
+    {network: '9mobile', plans: [{size: '500MB', price: 150}, {size: '1GB', price: 300}, {size: '2GB', price: 550}, {size: '5GB', price: 1200}, {size: '10GB', price: 2200}]}
+];
+
+function loadDataPlans() {
+    const container = document.getElementById('dataPlans');
+    if (!container) return;
+    
+    container.innerHTML = dataPlans.map(network => `
+        <div class="service-card" style="text-align:left; padding:20px;">
+            <i class="fas fa-signal"></i>
+            <h4>${network.network}</h4>
+            ${network.plans.map(plan => `
+                <div onclick="purchaseData('${network.network}', '${plan.size}', ${plan.price})" 
+                     style="padding:10px; margin:5px 0; background:#f8fafd; border-radius:10px; cursor:pointer;">
+                    <strong>${plan.size}</strong> - ₦${plan.price}
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function purchaseData(network, size, amount) {
+    if (userProfile.walletBalance < amount) {
+        showToast('❌ Insufficient balance! Please fund wallet', true);
+        return;
+    }
+    
+    const phone = prompt('Enter phone number:', userProfile.phone);
+    if (!phone || phone.length < 10) {
+        showToast('❌ Valid phone number required', true);
+        return;
+    }
+    
+    userProfile.walletBalance -= amount;
+    
+    transactions.unshift({
+        id: transactions.length + 1,
+        date: new Date().toLocaleString(),
+        type: 'Data Purchase',
+        details: `${network} ${size} to ${phone}`,
+        amount: `₦${amount}`,
+        status: 'success'
+    });
+    
+    loadDashboard();
+    loadTransactionHistory();
+    saveToLocalStorage();
+    showToast(`✅ Success! ${network} ${size} sent to ${phone}`);
+}
+
+// ==================== AIRTIME PLANS ====================
+
+const airtimePlans = [
+    {network: 'MTN', amounts: [100, 200, 500, 1000, 2000, 5000]},
+    {network: 'GLO', amounts: [100, 200, 500, 1000, 2000, 5000]},
+    {network: 'Airtel', amounts: [100, 200, 500, 1000, 2000, 5000]},
+    {network: '9mobile', amounts: [100, 200, 500, 1000, 2000, 5000]}
+];
+
+function loadAirtimeOptions() {
+    const container = document.getElementById('airtimeOptions');
+    if (!container) return;
+    
+    container.innerHTML = airtimePlans.map(network => `
+        <div class="service-card" style="text-align:left; padding:20px;">
+            <i class="fas fa-sim-card"></i>
+            <h4>${network.network}</h4>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
+                ${network.amounts.map(amount => `
+                    <div onclick="purchaseAirtime('${network.network}', ${amount})" 
+                         style="padding:10px; background:#f8fafd; border-radius:10px; cursor:pointer; text-align:center;">
+                        <strong>₦${amount}</strong>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
+
+function purchaseAirtime(network, amount) {
+    if (userProfile.walletBalance < amount) {
+        showToast('❌ Insufficient balance!', true);
+        return;
+    }
+    
+    const phone = prompt('Enter phone number:', userProfile.phone);
+    if (!phone || phone.length < 10) {
+        showToast('❌ Valid phone number required', true);
+        return;
+    }
+    
+    userProfile.walletBalance -= amount;
+    
+    transactions.unshift({
+        id: transactions.length + 1,
+        date: new Date().toLocaleString(),
+        type: 'Airtime Purchase',
+        details: `${network} ₦${amount} to ${phone}`,
+        amount: `₦${amount}`,
+        status: 'success'
+    });
+    
+    loadDashboard();
+    loadTransactionHistory();
+    saveToLocalStorage();
+    showToast(`✅ ${network} airtime of ₦${amount} sent to ${phone}`);
+}
+
+// ==================== TRANSACTION HISTORY ====================
+
+function loadTransactionHistory() {
+    const tbody = document.getElementById('historyBody');
+    if (!tbody) return;
+    
+    if (transactions.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No transactions yet</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = transactions.map(t => `
+        <tr>
+            <td>${t.date}</td>
+            <td>${t.type}</td>
+            <td>${t.details}</td>
+            <td>${t.amount}</td>
+            <td class="status-${t.status}">${t.status.toUpperCase()}</td>
+        </tr>
+    `).join('');
+}
+
+// ==================== PROFILE FUNCTIONS ====================
+
+function loadProfile() {
+    const profileName = document.getElementById('profileName');
+    const profilePhone = document.getElementById('profilePhone');
+    const profileEmail = document.getElementById('profileEmail');
+    const profileJoinDate = document.getElementById('profileJoinDate');
+    const walletAmount = document.getElementById('walletAmount');
+    const userNameDisplay = document.getElementById('userNameDisplay');
+    
+    if (profileName) profileName.innerText = userProfile.fullName;
+    if (profilePhone) profilePhone.innerText = userProfile.phone;
+    if (profileEmail) profileEmail.innerText = userProfile.email;
+    if (profileJoinDate) profileJoinDate.innerText = new Date(userProfile.joinDate).toDateString();
+    if (walletAmount) walletAmount.innerHTML = `₦${userProfile.walletBalance.toLocaleString()}`;
+    if (userNameDisplay) userNameDisplay.innerText = userProfile.fullName.split(' ')[0];
+}
+
+function editProfile() {
+    let newName = prompt('Enter full name:', userProfile.fullName);
+    if (newName && newName.trim()) userProfile.fullName = newName.trim();
+    
+    let newEmail = prompt('Enter email:', userProfile.email);
+    if (newEmail && newEmail.trim()) userProfile.email = newEmail.trim();
+    
+    loadProfile();
+    saveToLocalStorage();
+    showToast('Profile updated!');
+}
+
+// ==================== PAYSTACK INTEGRATION ====================
+
+const BACKEND_URL = 'http://localhost:3000';
+
+async function fundWalletWithPaystack() {
+    const amount = prompt('💰 Enter amount to fund (₦):', '1000');
+    
+    if (!amount || amount < 100) {
+        showToast('❌ Minimum amount is ₦100', true);
+        return;
+    }
+    
+    const userEmail = document.getElementById('profileEmail')?.innerText;
+    if (!userEmail || userEmail === 'Not set') {
+        showToast('❌ Please update your email in profile first!', true);
+        return;
+    }
+    
+    try {
+        showToast('🔄 Initializing payment...');
+        
+        const response = await fetch(`${BACKEND_URL}/api/initialize-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: userEmail,
+                amount: parseInt(amount)
+            })
         });
+        
+        const data = await response.json();
+        
+        if (data.authorization_url) {
+            showToast('✅ Redirecting to payment page...');
+            sessionStorage.setItem('pendingAmount', amount);
+            sessionStorage.setItem('pendingEmail', userEmail);
+            window.location.href = data.authorization_url;
+        } else {
+            showToast('❌ Error: Could not initialize payment', true);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('❌ Cannot connect to payment server. Make sure server is running on port 3000', true);
+    }
+}
 
-        document.getElementById('fundWallet')?.addEventListener('click', () => {
-            let amount = prompt('Enter amount to fund (₦):', '1000');
-            if(amount && !isNaN(amount) && amount > 0) {
+async function checkPaymentCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const reference = urlParams.get('reference');
+    
+    if (reference) {
+        const pendingAmount = sessionStorage.getItem('pendingAmount');
+        showToast('🔄 Verifying payment...');
+        
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/verify-payment`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reference: reference })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                const amount = data.amount || pendingAmount || 1000;
                 userProfile.walletBalance += parseInt(amount);
                 loadProfile();
                 loadDashboard();
                 saveToLocalStorage();
-                showToast(`✅ Funded ₦${amount} successfully!`);
+                
+                transactions.unshift({
+                    id: transactions.length + 1,
+                    date: new Date().toLocaleString(),
+                    type: 'Wallet Funding',
+                    details: `Paystack Payment - Reference: ${reference.substring(0, 8)}`,
+                    amount: `₦${amount}`,
+                    status: 'success'
+                });
+                
+                loadTransactionHistory();
+                saveToLocalStorage();
+                showToast(`✅ ₦${amount} added to wallet successfully!`);
+                
+                sessionStorage.removeItem('pendingAmount');
+                sessionStorage.removeItem('pendingEmail');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                showToast('❌ Payment verification failed', true);
             }
-        });
+        } catch (error) {
+            console.error('Verification error:', error);
+            showToast('❌ Error verifying payment', true);
+        }
+    }
+}
 
-        document.getElementById('withdrawFunds')?.addEventListener('click', () => {
-            let amount = prompt('Enter amount to withdraw (₦):', '1000');
-            if(amount && !isNaN(amount) && amount > 0) {
-                if(userProfile.walletBalance < amount) { showToast('❌ Insufficient balance!', true); return; }
-                const bankName = prompt('Enter bank name:', '');
-                const accountNo = prompt('Enter account number:', '');
-                if(bankName && accountNo) {
-                    userProfile.walletBalance -= parseInt(amount);
-                    transactions.unshift({id:transactions.length+1, date:new Date().toLocaleString(), type:'Withdrawal', details:`To ${bankName} - ${accountNo}`, amount:`₦${amount}`, status:'pending'});
-                    loadProfile();
-                    loadDashboard();
-                    loadTransactionHistory();
-                    saveToLocalStorage();
-                    showToast(`✅ Withdrawal request for ₦${amount} submitted`);
-                }
-            }
-        });
+async function testBackendConnection() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/test`);
+        const text = await response.text();
+        console.log('✅ Backend connected:', text);
+        return true;
+    } catch (error) {
+        console.error('❌ Backend not available:', error);
+        return false;
+    }
+}
 
-        document.querySelectorAll('.service-card[data-service]').forEach(card => {
-            card.addEventListener('click', () => showPage(card.getAttribute('data-service')));
-        });
+// ==================== CABLE TV ====================
 
-        // Initialize
-        loadFromLocalStorage();
-        if(!sessionStorage.getItem('isLoggedIn')) window.location.href = 'index.html';
-        loadDashboard();
-        loadProfile();
-        loadTransactionHistory();
-        loadDataPlans();
-        loadAirtimeOptions();
-        loadCableTV();
-        loadElectricity();
-        loadOtherBills();
-    </script>
+const cableTV = [
+    {name: 'DSTV', plans: [{name: 'Compact', price: 7500}, {name: 'Compact Plus', price: 12500}, {name: 'Premium', price: 18500}]},
+    {name: 'GOTV', plans: [{name: 'Max', price: 5700}, {name: 'Supa Plus', price: 8200}]},
+    {name: 'STARTIMES', plans: [{name: 'Basic', price: 2500}, {name: 'Classic', price: 4200}, {name: 'Premium', price: 6500}]}
+];
+
+function loadCableTV() {
+    const container = document.getElementById('cableTVOptions');
+    if (!container) return;
+    
+    container.innerHTML = cableTV.map(provider => `
+        <div class="service-card" style="text-align:left; padding:20px;">
+            <i class="fas fa-tv"></i>
+            <h4>${provider.name}</h4>
+            ${provider.plans.map(plan => `
+                <div onclick="payCableBill('${provider.name}', '${plan.name}', ${plan.price})" 
+                     style="padding:10px; margin:5px 0; background:#f8fafd; border-radius:10px; cursor:pointer;">
+                    <strong>${plan.name}</strong> - ₦${plan.price}
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function payCableBill(provider, plan, amount) {
+    if (userProfile.walletBalance < amount) {
+        showToast('❌ Insufficient balance!', true);
+        return;
+    }
+    
+    const smartCard = prompt('Enter smart card number:', '');
+    if (!smartCard || smartCard.length < 5) {
+        showToast('❌ Valid smart card number required', true);
+        return;
+    }
+    
+    userProfile.walletBalance -= amount;
+    
+    transactions.unshift({
+        id: transactions.length + 1,
+        date: new Date().toLocaleString(),
+        type: 'Cable TV',
+        details: `${provider} ${plan} - SmartCard: ${smartCard}`,
+        amount: `₦${amount}`,
+        status: 'success'
+    });
+    
+    loadDashboard();
+    loadTransactionHistory();
+    saveToLocalStorage();
+    showToast(`✅ ${provider} ${plan} subscription successful!`);
+}
+
+// ==================== ELECTRICITY BILLS ====================
+
+const electricityBills = [
+    {disco: 'IKEDC (Ikeja Electric)', minAmount: 1000},
+    {disco: 'EEDC (Enugu Electric)', minAmount: 1000},
+    {disco: 'KEDCO (Kano Electric)', minAmount: 1000},
+    {disco: 'PHED (Port Harcourt Electric)', minAmount: 1000}
+];
+
+function loadElectricity() {
+    const container = document.getElementById('electricityOptions');
+    if (!container) return;
+    
+    container.innerHTML = electricityBills.map(disco => `
+        <div onclick="payElectricityBill('${disco.disco}')" 
+             style="padding:15px; margin:10px 0; background:#f8fafd; border-radius:12px; cursor:pointer;">
+            <i class="fas fa-bolt"></i> <strong>${disco.disco}</strong> - Min ₦${disco.minAmount}
+        </div>
+    `).join('');
+}
+
+function payElectricityBill(disco) {
+    const amount = prompt('Enter amount (minimum ₦1000):', '1000');
+    if (!amount || amount < 1000) {
+        showToast('❌ Minimum amount is ₦1000', true);
+        return;
+    }
+    
+    if (userProfile.walletBalance < parseInt(amount)) {
+        showToast('❌ Insufficient balance!', true);
+        return;
+    }
+    
+    const meterNo = prompt('Enter meter number:', '');
+    if (!meterNo || meterNo.length < 5) {
+        showToast('❌ Valid meter number required', true);
+        return;
+    }
+    
+    userProfile.walletBalance -= parseInt(amount);
+    
+    transactions.unshift({
+        id: transactions.length + 1,
+        date: new Date().toLocaleString(),
+        type: 'Electricity Bill',
+        details: `${disco} - Meter: ${meterNo}`,
+        amount: `₦${amount}`,
+        status: 'success'
+    });
+    
+    loadDashboard();
+    loadTransactionHistory();
+    saveToLocalStorage();
+    showToast(`✅ Electricity bill of ₦${amount} paid for ${disco}`);
+}
+
+// ==================== NAVIGATION ====================
+
+const panels = {
+    dashboard: 'dashboardPanel',
+    data: 'dataPanel',
+    airtime: 'airtimePanel',
+    bills: 'billsPanel',
+    cabletv: 'cabletvPanel',
+    electricity: 'electricityPanel',
+    history: 'historyPanel',
+    wallet: 'walletPanel',
+    profile: 'profilePanel'
+};
+
+function showPage(page) {
+    // Hide all panels
+    Object.values(panels).forEach(panelId => {
+        const panel = document.getElementById(panelId);
+        if (panel) panel.classList.remove('active');
+    });
+    
+    // Show selected panel
+    const activePanel = document.getElementById(panels[page]);
+    if (activePanel) activePanel.classList.add('active');
+    
+    // Update active nav link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-page') === page) {
+            link.classList.add('active');
+        }
+    });
+    
+    // Update page title
+    const pageTitle = document.getElementById('pageTitle');
+    if (pageTitle) {
+        pageTitle.innerText = page.charAt(0).toUpperCase() + page.slice(1).replace('cabletv', 'Cable TV').replace('electricity', 'Electricity');
+    }
+    
+    // Load page-specific data
+    if (page === 'history') loadTransactionHistory();
+    if (page === 'dashboard') loadDashboard();
+    if (page === 'profile') loadProfile();
+    if (page === 'data') loadDataPlans();
+    if (page === 'airtime') loadAirtimeOptions();
+    if (page === 'cabletv') loadCableTV();
+    if (page === 'electricity') loadElectricity();
+}
+
+// ==================== INITIALIZATION ====================
+
+// Global variables
+let userProfile;
+let transactions;
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', async function() {
+    // Check if user is logged in
+    if (!sessionStorage.getItem('isLoggedIn')) {
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Load data from localStorage
+    loadFromLocalStorage();
+    
+    // Initialize all displays
+    loadDashboard();
+    loadProfile();
+    loadTransactionHistory();
+    loadDataPlans();
+    loadAirtimeOptions();
+    loadCableTV();
+    loadElectricity();
+    
+    // Setup fund wallet button
+    const fundBtn = document.getElementById('fundWallet');
+    if (fundBtn) {
+        const newFundBtn = fundBtn.cloneNode(true);
+        fundBtn.parentNode.replaceChild(newFundBtn, fundBtn);
+        newFundBtn.addEventListener('click', fundWalletWithPaystack);
+        console.log('✅ Fund wallet button connected');
+    }
+    
+    // Setup navigation
+    document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage(link.getAttribute('data-page'));
+        });
+    });
+    
+    // Setup logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.clear();
+            showToast('Logging out...');
+            setTimeout(() => window.location.href = 'index.html', 1000);
+        });
+    }
+    
+    // Setup service cards
+    document.querySelectorAll('.service-card[data-service]').forEach(card => {
+        card.addEventListener('click', () => {
+            showPage(card.getAttribute('data-service'));
+        });
+    });
+    
+    // Check for payment callback
+    await checkPaymentCallback();
+    
+    // Test backend connection (optional)
+    testBackendConnection();
+    
+    console.log('✅ T Data Connect initialized successfully!');
+});
+
+// Expose functions globally for onclick handlers
+window.purchaseData = purchaseData;
+window.purchaseAirtime = purchaseAirtime;
+window.payCableBill = payCableBill;
+window.payElectricityBill = payElectricityBill;
+window.editProfile = editProfile;
+window.showPage = showPage;
+window.fundWalletWithPaystack = fundWalletWithPaystack;
+</script>
 </body>
 </html>
