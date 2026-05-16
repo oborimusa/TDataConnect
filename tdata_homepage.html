@@ -71,18 +71,6 @@
             display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px; margin-bottom: 30px;
         }
-
-        .chart-container {
-    background: rgba(255,255,255,0.95);
-    padding: 20px;
-    border-radius: 20px;
-    margin-bottom: 30px;
-    max-height: 200px;  /* Add this to reduce height */
-}
-canvas { 
-    max-height: 180px;  /* Reduce chart height */
-    width: 100% !important; 
-}
         .stat-card {
             background: rgba(255,255,255,0.95); padding: 25px;
             border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -96,11 +84,6 @@ canvas {
             color: transparent; margin-bottom: 10px;
         }
         .stat-card h3 { font-size: 1.8rem; color: #2c3e50; }
-        .chart-container {
-            background: rgba(255,255,255,0.95); padding: 20px;
-            border-radius: 20px; margin-bottom: 30px;
-        }
-        canvas { max-height: 300px; width: 100% !important; }
         .content-panel { display: none; animation: fadeIn 0.5s ease; }
         .content-panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -130,8 +113,7 @@ canvas {
         .service-card i {
             font-size: 2rem;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            background-clip: text;
+            -webkit-background-clip: text; background-clip: text;
             color: transparent;
             margin-bottom: 10px;
         }
@@ -289,9 +271,8 @@ canvas {
                 <div class="stat-card"><i class="fas fa-trophy"></i><h3 id="totalSpent">₦0</h3><p>Total Spent</p></div>
                 <div class="stat-card"><i class="fas fa-calendar"></i><h3 id="memberDays">0</h3><p>Member Since</p></div>
             </div>
-            <!-- <div class="chart-container"><canvas id="spendingChart"></canvas></div> -->
             
-            <!-- 6 Cards Grid - No Vacant Space -->
+            <!-- 6 Cards Grid -->
             <div class="services-grid">
                 <div class="service-card" data-service="data">
                     <i class="fas fa-database"></i>
@@ -462,16 +443,6 @@ canvas {
         const daysMember = Math.floor((new Date() - new Date(userProfile.joinDate)) / (1000 * 60 * 60 * 24));
         const memberDaysElement = document.getElementById('memberDays');
         if (memberDaysElement) memberDaysElement.innerText = daysMember > 0 ? daysMember : 1;
-        
-        const ctx = document.getElementById('spendingChart');
-        if (ctx) {
-            if (window.spendingChart) window.spendingChart.destroy();
-            window.spendingChart = new Chart(ctx.getContext('2d'), {
-                type: 'line',
-                data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ label: 'Daily Spending (₦)', data: [1200,850,2000,1500,3000,2500,1800], borderColor: '#667eea', backgroundColor: 'rgba(102,126,234,0.1)', tension: 0.4, fill: true }] },
-                options: { responsive: true, plugins: { legend: { position: 'top' } } }
-            });
-        }
     }
 
     // ==================== DATA PLANS ====================
@@ -538,7 +509,7 @@ canvas {
     function loadTransactionHistory() {
         const tbody = document.getElementById('historyBody');
         if (!tbody) return;
-        if (transactions.length === 0) { tbody.innerHTML = '<td>td colspan="5" style="text-align:center;">No transactions yet</td></tr>'; return; }
+        if (transactions.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No transactions yet</td></tr>'; return; }
         tbody.innerHTML = transactions.map(t => `<tr><td>${t.date}</td><td>${t.type}</td><td>${t.details}</td><td>${t.amount}</td><td class="status-${t.status}">${t.status.toUpperCase()}</td></tr>`).join('');
     }
 
@@ -568,15 +539,22 @@ canvas {
         showToast('Profile updated!');
     }
 
-    // ==================== PAYSTACK ====================
+    // ==================== PAYSTACK INTEGRATION ====================
+    // 🔑 REPLACE WITH YOUR PAYSTACK PUBLIC KEY
+    // Get it from: https://dashboard.paystack.com/#/settings/developer
     const PAYSTACK_PUBLIC_KEY = 'pk_test_51d5c26dbd407c184e80993bb1d65637faf5beba';
+    
+    // For LIVE MODE, replace with: pk_live_xxxxxxxxxxxxx
 
     function fundWalletWithPaystack() {
         const amount = prompt('💰 Enter amount to fund (₦):', '1000');
         if (!amount || amount < 100) { showToast('❌ Minimum amount is ₦100', true); return; }
         
         const userEmail = document.getElementById('profileEmail')?.innerText;
-        if (!userEmail || userEmail === 'Not set') { showToast('❌ Please update your email in profile first!', true); return; }
+        if (!userEmail || userEmail === 'Not set') { 
+            showToast('❌ Please update your email in profile first!', true); 
+            return; 
+        }
         
         const parsedAmount = parseInt(amount);
         
@@ -586,11 +564,17 @@ canvas {
             amount: parsedAmount * 100,
             currency: 'NGN',
             ref: 'TDC_' + Date.now() + '_' + Math.floor(Math.random() * 1000000),
-            onClose: function() { showToast('Payment cancelled'); },
+            onClose: function() { 
+                showToast('Payment cancelled'); 
+            },
             callback: function(response) {
+                // Payment successful - add funds to wallet
                 showToast('✅ Payment successful! Adding funds...');
                 userProfile.walletBalance += parsedAmount;
-                loadProfile(); loadDashboard(); saveToLocalStorage();
+                loadProfile(); 
+                loadDashboard(); 
+                saveToLocalStorage();
+                
                 transactions.unshift({
                     id: transactions.length + 1,
                     date: new Date().toLocaleString(),
@@ -599,7 +583,8 @@ canvas {
                     amount: `₦${parsedAmount}`,
                     status: 'success'
                 });
-                loadTransactionHistory(); saveToLocalStorage();
+                loadTransactionHistory(); 
+                saveToLocalStorage();
                 showToast(`✅ ₦${parsedAmount} added to wallet!`);
             }
         });
